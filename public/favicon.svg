@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="ATLAS STREETWEAR">
+  <!--
+    Icône d'onglet d'ATLAS STREETWEAR.
+
+    POURQUOI PAS LE LOGO. Le badge complet — la chèvre debout sur
+    l'éclair, cernée par le nom — demande plus de détail que seize
+    pixels n'en contiennent. Réduit à cette taille il devient une tache
+    grise, quel que soit le fond. Il reste employé partout où il a la
+    place de respirer : pied de page, écran d'accueil, partages.
+
+    CE QUI RESTE. L'étoile du logo, seule. Sept branches, rapport du
+    creux au rayon mesuré sur le fichier d'origine (0,50) : c'est bien
+    l'étoile d'ATLAS, pas une étoile générique.
+
+    POURQUOI LE ROUGE PLEIN. Le carré précédent était presque noir
+    (rgb 1,17,17) : sur une barre d'onglets sombre il disparaissait, et
+    la marque avec. Le rouge de la marque est le seul fond qui se
+    détache aussi bien sur une barre claire que sombre — c'est la
+    condition pour qu'on retrouve l'onglet parmi quinze autres.
+
+    POURQUOI UN SVG. Il est net à toutes les tailles, sans multiplier
+    les fichiers. favicon.png reste là pour les navigateurs qui ne
+    savent pas le lire.
+  -->
+  <rect width="128" height="128" fill="#c6272d"/>
+  <path fill="#ffffff" d="M64.0 14.0L74.8 41.5L103.1 32.8L88.4 58.4L112.7 75.1L83.5 79.6L85.7 109.0L64.0 89.0L42.3 109.0L44.5 79.6L15.3 75.1L39.6 58.4L24.9 32.8L53.2 41.5Z"/>
+</svg>

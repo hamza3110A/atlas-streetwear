@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Commandes — Administration ATLAS</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.png" type="image/png" sizes="64x64">
+<link rel="stylesheet" href="/admin/css/admin.css">
+</head>
+<body>
+<div class="app">
+  <main class="principal">
+
+    <div class="entete-page">
+      <div>
+        <h1 class="titre-page">Commandes</h1>
+        <p class="sous-titre">Le stock sort au passage au-delà de « nouvelle », et revient à l'annulation.</p>
+      </div>
+    </div>
+
+    <div class="recherche-boite">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
+        <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path>
+      </svg>
+      <input type="search" data-recherche placeholder="Référence, nom, téléphone, ville…" aria-label="Rechercher une commande">
+    </div>
+
+    <nav class="groupe-boutons" data-filtres aria-label="Filtrer par statut"></nav>
+
+    <div class="panneau">
+      <div class="table-boite">
+        <table>
+          <thead>
+            <tr><th>Référence</th><th>Client</th><th>Ville</th><th class="num">Total</th><th>Statut</th><th>Date</th><th></th></tr>
+          </thead>
+          <tbody data-liste><tr><td colspan="7" class="chargement">Chargement…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+</div>
+<script src="/admin/js/admin.js"></script>
+<script src="/admin/js/commandes.js"></script>
+</body>
+</html>

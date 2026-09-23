@@ -1,0 +1,52 @@
+{
+  "name": "atlas-streetwear",
+  "version": "1.0.0",
+  "description": "Boutique en ligne ATLAS STREETWEAR — Node + Express + SQLite, sans étape de compilation.",
+  "private": true,
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "scripts": {
+    "start": "node --disable-warning=ExperimentalWarning src/server.js",
+    "dev": "node --disable-warning=ExperimentalWarning --watch src/server.js",
+    "installer": "node --disable-warning=ExperimentalWarning scripts/installer.js",
+    "sauvegarde": "node --disable-warning=ExperimentalWarning scripts/sauvegarde.js",
+    "archives": "node --disable-warning=ExperimentalWarning scripts/archives.js",
+    "verif:securite": "node --disable-warning=ExperimentalWarning scripts/verif-securite.js",
+    "verif:navigateur": "node scripts/verif-navigateur.js",
+    "verif:admin": "node scripts/verif-admin.js",
+    "ouvrir": "node --disable-warning=ExperimentalWarning scripts/boutique.js ouvrir",
+    "fermer": "node --disable-warning=ExperimentalWarning scripts/boutique.js fermer",
+    "etat": "node --disable-warning=ExperimentalWarning scripts/boutique.js etat",
+    "captures": "node scripts/captures-guide.js",
+    "nettoyer": "node scripts/nettoyer.js",
+    "photos": "node scripts/photos.js",
+    "recette": "node scripts/recette/vitrine.js && node scripts/recette/parcours.js && node scripts/recette/admin.js && node scripts/recette/liens.js",
+    "recette:vitrine": "node scripts/recette/vitrine.js",
+    "recette:parcours": "node scripts/recette/parcours.js",
+    "recette:admin": "node scripts/recette/admin.js",
+    "recette:liens": "node scripts/recette/liens.js",
+    "vider-commandes": "node --disable-warning=ExperimentalWarning scripts/vider-commandes.js",
+    "vider-commandes:oui": "node --disable-warning=ExperimentalWarning scripts/vider-commandes.js --vraiment",
+    "nettoyer:oui": "node scripts/nettoyer.js --vraiment",
+    "mentions": "node --disable-warning=ExperimentalWarning scripts/mentions-legales.js"
+  },
+  "dependencies": {
+    "@fontsource/anton": "^5.3.0",
+    "@fontsource/archivo-narrow": "^5.3.0",
+    "@fontsource/barlow-condensed": "^5.3.0",
+    "@fontsource/fira-sans-condensed": "^5.3.0",
+    "@fontsource/oswald": "^5.3.0",
+    "@fontsource/roboto-condensed": "^5.3.0",
+    "@fontsource/saira-condensed": "^5.3.0",
+    "bcryptjs": "^3.0.2",
+    "express": "^4.21.2",
+    "multer": "^2.0.2",
+    "sharp": "^0.35.0",
+    "zod": "^4.4.3"
+  },
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "playwright-core": "^1.56.0"
+  }
+}

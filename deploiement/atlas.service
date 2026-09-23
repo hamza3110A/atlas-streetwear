@@ -1,0 +1,53 @@
+# /etc/systemd/system/atlas.service
+#
+#   sudo cp deploiement/atlas.service /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now atlas
+#
+[Unit]
+Description=ATLAS STREETWEAR — boutique en ligne
+Documentation=file:///var/www/atlas/README.md
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=atlas
+Group=atlas
+WorkingDirectory=/var/www/atlas
+ExecStart=/usr/bin/node --disable-warning=ExperimentalWarning src/server.js
+
+# Le site remonte tout seul après une coupure, un plantage, un redémarrage
+# du serveur. C'est la seule ligne qui évite d'être appelé un dimanche.
+Restart=always
+RestartSec=3
+
+Environment=PORT=3000
+
+# ATTENTION — on NE met PAS NODE_ENV=production.
+# Le drapeau « Secure » du cookie de session se décide sur le protocole
+# réel de la requête (req.secure / X-Forwarded-Proto), jamais sur une
+# variable d'environnement. Poser NODE_ENV ici ne changerait rien au
+# fonctionnement, mais entretiendrait l'idée fausse que c'est lui qui
+# commande — et le jour où quelqu'un s'appuiera dessus, la connexion
+# cassera en silence.
+
+# Journal : consultable avec « journalctl -u atlas -f »
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=atlas
+
+# Cloisonnement : le service ne peut écrire que dans son dossier data/.
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/www/atlas/data
+ProtectKernelTunables=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+LockPersonality=true
+MemoryDenyWriteExecute=false
+
+[Install]
+WantedBy=multi-user.target

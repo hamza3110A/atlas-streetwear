@@ -1,0 +1,11 @@
+# sudo systemctl enable --now atlas-sauvegarde.timer
+[Unit]
+Description=Sauvegarde quotidienne de la boutique ATLAS
+
+[Timer]
+OnCalendar=*-*-* 03:30:00
+Persistent=true
+RandomizedDelaySec=300
+
+[Install]
+WantedBy=timers.target

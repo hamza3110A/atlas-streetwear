@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guide du site — Administration ATLAS</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.png" type="image/png" sizes="64x64">
+<link rel="stylesheet" href="/admin/css/admin.css">
+<link rel="stylesheet" href="/admin/css/guide.css">
+</head>
+<body>
+<div class="app">
+  <main class="principal">
+
+    <div class="entete-page">
+      <div>
+        <h1 class="titre-page">Guide du site</h1>
+        <p class="sous-titre">Tout ce qu'il faut savoir pour faire tourner la boutique. Aucune connaissance technique requise.</p>
+      </div>
+      <button class="btn" type="button" data-imprimer>Imprimer ce guide</button>
+    </div>
+
+    <nav class="sommaire" aria-label="Sommaire">
+      <a href="#demarrer">1. Se connecter</a>
+      <a href="#produit">2. Ajouter un produit</a>
+      <a href="#photos">3. Les photos</a>
+      <a href="#stock">4. Gérer le stock</a>
+      <a href="#commandes">5. Traiter une commande</a>
+      <a href="#rayons">6. Créer un rayon</a>
+      <a href="#promos">7. Codes promo</a>
+      <a href="#accueil">8. La page d'accueil</a>
+      <a href="#fermer">9. Fermer la boutique</a>
+      <a href="#sauvegarde">10. Sauvegardes</a>
+      <a href="#problemes">11. En cas de problème</a>
+    </nav>
+
+    <!-- ============================================================ 1 -->
+    <section class="etape" id="demarrer">
+      <h2><span class="numero">1</span> Se connecter</h2>
+      <p>L'administration se trouve à l'adresse de votre boutique suivie de <code>/admin</code>.
+         Par exemple : <code>https://votreboutique.tn/admin</code>. Mettez-la en favori.</p>
+      <figure><img src="/admin/img/guide/connexion.jpg" alt="Écran de connexion à l'administration" loading="lazy">
+        <figcaption>L'écran de connexion. Votre compte a été créé à votre nom lors de l'installation.</figcaption></figure>
+      <div class="conseil">
+        <strong>Changez votre mot de passe</strong>
+        <p>Dès la première connexion : <em>Réglages → Mon compte</em>. Le changement déconnecte
+           automatiquement tous les autres appareils, ce qui est exactement ce qu'on veut si
+           quelqu'un d'autre avait accès.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="etape" id="produit">
+      <h2><span class="numero">2</span> Ajouter un produit</h2>
+      <figure><img src="/admin/img/guide/produits.jpg" alt="Liste des produits dans l'administration" loading="lazy">
+        <figcaption>La page Produits. Le bouton rouge en haut à droite crée un nouvel article.</figcaption></figure>
+      <ol>
+        <li>Cliquez sur <strong>+ Nouveau produit</strong>.</li>
+        <li>Remplissez le <strong>nom</strong> et le <strong>prix</strong>. Le prix s'écrit comme
+            on le dit : <code>89</code> ou <code>89,500</code>. Les deux fonctionnent.</li>
+        <li>Choisissez un <strong>rayon</strong> (Tee-shirts, Hoodies…). C'est ce qui range
+            l'article dans le menu du site.</li>
+        <li>Sous <strong>Tailles et stock</strong>, mettez une ligne par taille avec la quantité
+            que vous avez en boutique.</li>
+        <li>Enregistrez. Le produit est en ligne immédiatement.</li>
+      </ol>
+      <div class="conseil">
+        <strong>Le prix barré</strong>
+        <p>Si vous remplissez « prix barré », le site affiche l'ancien prix rayé à côté du nouveau
+           et pose une étiquette « Promo » sur la photo. Laissez vide s'il n'y a pas de promotion.</p>
+      </div>
+      <div class="attention">
+        <strong>Retirer un article de la vente</strong>
+        <p>Ne le supprimez pas s'il a déjà été vendu : décochez « En vente sur le site ». Il
+           disparaît de la boutique mais reste dans l'historique des commandes. Si vous essayez de
+           supprimer un produit déjà commandé, le site vous en empêche et vous propose de le
+           masquer à la place — c'est votre comptabilité qu'il protège.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="etape" id="photos">
+      <h2><span class="numero">3</span> Les photos</h2>
+      <p>Ouvrez un produit, descendez jusqu'à <strong>Photos</strong>, puis touchez la zone en
+         pointillés (ou faites glisser vos fichiers dessus).</p>
+      <ul>
+        <li><strong>Format vertical</strong>, plus haut que large. Le site les affiche en 3:4.</li>
+        <li><strong>La deuxième photo compte</strong> : sur ordinateur, elle apparaît quand le
+            visiteur passe la souris sur l'article. Mettez le dos du vêtement, ou un détail.</li>
+        <li>Photographiez sur fond uni, à la lumière du jour. Une photo nette au téléphone vaut
+            mieux qu'une photo floue à l'appareil photo.</li>
+        <li>Le site réduit et réencode automatiquement chaque image : ne vous souciez pas du poids.</li>
+      </ul>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="etape" id="stock">
+      <h2><span class="numero">4</span> Gérer le stock</h2>
+      <figure><img src="/admin/img/guide/stock.jpg" alt="Page Stock : une ligne par taille" loading="lazy">
+        <figcaption>Une ligne = une taille. Les ruptures sont automatiquement en haut de la liste.</figcaption></figure>
+      <p><strong>Au retour d'un réassort :</strong> ouvrez la page Stock, cliquez dans la case
+         « Quantité » de la première ligne, tapez le nouveau chiffre, appuyez sur
+         <kbd>Entrée</kbd>. Le curseur saute tout seul à la ligne suivante. Vous pouvez descendre
+         toute la liste sans jamais toucher la souris.</p>
+      <ul>
+        <li>C'est enregistré dès que vous appuyez sur Entrée ou que vous cliquez ailleurs.
+            Il n'y a pas de bouton « enregistrer » à chercher.</li>
+        <li>Un stock à zéro affiche <strong class="rouge">ÉPUISÉ</strong>. Sur le site, la taille
+            reste visible mais barrée : le client voit qu'elle existe et reviendra.</li>
+        <li>La recherche ignore les accents : taper <code>hoodie zaghouan</code> ou
+            <code>ZAGHOUAN</code> donne le même résultat.</li>
+      </ul>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="etape" id="commandes">
+      <h2><span class="numero">5</span> Traiter une commande</h2>
+      <figure><img src="/admin/img/guide/commandes.jpg" alt="Liste des commandes" loading="lazy">
+        <figcaption>Les commandes, filtrables par statut. Le compteur rouge dans le menu indique celles qui attendent.</figcaption></figure>
+
+      <h3>Le cycle d'une commande</h3>
+      <div class="cycle">
+        <span class="etiq etiq--nouvelle">Nouvelle</span> →
+        <span class="etiq etiq--confirmee">Confirmée</span> →
+        <span class="etiq etiq--en_preparation">En préparation</span> →
+        <span class="etiq etiq--expediee">Expédiée</span> →
+        <span class="etiq etiq--livree">Livrée</span>
+        <span class="par-ailleurs">et à tout moment : <span class="etiq etiq--annulee">Annulée</span></span>
+      </div>
+
+      <div class="attention">
+        <strong>La règle du stock — à retenir</strong>
+        <p>Le stock <strong>sort</strong> de l'inventaire dès que vous faites passer une commande
+           au-delà de « Nouvelle ». Il <strong>revient</strong> si vous l'annulez ou si vous la
+           ramenez à « Nouvelle ».</p>
+        <p>Vous ne pouvez pas décompter deux fois la même commande : le site retient qu'il l'a
+           déjà fait. Confirmez, préparez, expédiez autant de fois que vous voulez, le stock ne
+           bougera qu'une seule fois.</p>
+      </div>
+
+      <ol>
+        <li>Cliquez sur <strong>Ouvrir</strong> pour voir le détail et l'adresse.</li>
+        <li>Appelez le client au numéro affiché pour confirmer.</li>
+        <li>Passez le statut à <strong>Confirmée</strong> : le stock est décompté.</li>
+        <li><strong>Imprimer le bon</strong> génère un bon de livraison avec l'adresse et le
+            montant à encaisser. Glissez-le dans le colis.</li>
+        <li>Quand le livreur part : <strong>Expédiée</strong>. Quand il a encaissé :
+            <strong>Livrée</strong>.</li>
+      </ol>
+      <figure><img src="/admin/img/guide/mobile-commandes.jpg" alt="Les commandes sur téléphone" loading="lazy" class="capture-mobile">
+        <figcaption>L'administration fonctionne aussi bien depuis un téléphone, au comptoir.</figcaption></figure>
+    </section>
+
+    <!-- ============================================================ 6 -->
+    <section class="etape" id="rayons">
+      <h2><span class="numero">6</span> Créer un rayon</h2>
+      <figure><img src="/admin/img/guide/rayons.jpg" alt="Page des rayons" loading="lazy">
+        <figcaption>Les rayons construisent le menu du site. Rien d'autre à faire.</figcaption></figure>
+      <p>Créez un rayon (« Casquettes », « Accessoires »…) et il apparaît <strong>tout seul</strong>
+         dans le menu de la boutique, dans le pied de page et dans les filtres. Vous n'avez
+         personne à appeler pour ça.</p>
+      <p>« Position dans le menu » décide de l'ordre : 1 en premier, 2 ensuite, et ainsi de suite.</p>
+    </section>
+
+    <!-- ============================================================ 7 -->
+    <section class="etape" id="promos">
+      <h2><span class="numero">7</span> Codes promo</h2>
+      <figure><img src="/admin/img/guide/promotions.jpg" alt="Page des promotions" loading="lazy"></figure>
+      <ul>
+        <li><strong>Pourcentage</strong> : 10 = 10 % de remise sur le panier.</li>
+        <li><strong>Montant fixe</strong> : 20 = 20 DT de remise.</li>
+        <li><strong>Livraison offerte</strong> : les frais de port tombent à zéro.</li>
+        <li><strong>Minimum d'achat</strong> : le code ne s'applique qu'au-dessus de ce montant.</li>
+        <li><strong>Utilisations maximum</strong> : 0 = illimité. Mettez 50 pour un code de
+            lancement à durée limitée.</li>
+      </ul>
+      <p>Le client saisit le code dans son panier. Le montant de la remise est toujours recalculé
+         par le site au moment de la commande : personne ne peut s'inventer une réduction.</p>
+    </section>
+
+    <!-- ============================================================ 8 -->
+    <section class="etape" id="accueil">
+      <h2><span class="numero">8</span> La page d'accueil</h2>
+      <figure><img src="/admin/img/guide/page-accueil.jpg" alt="Réglage de la page d'accueil" loading="lazy"></figure>
+      <p>Vous changez ici le grand titre du haut de la boutique et le bandeau du bas.</p>
+      <p>Le <strong>mot en rouge</strong> doit être écrit exactement comme dans la ligne : si votre
+         ligne est <em>BORN FROM THE MOUNTAINS</em> et que vous voulez <em>MOUNTAINS</em> en rouge,
+         écrivez <code>MOUNTAINS</code> dans la case. L'aperçu juste en dessous vous montre le
+         résultat avant d'enregistrer, et vous prévient si le mot ne figure pas dans la ligne.</p>
+      <p>Plus bas, cochez les articles à <strong>mettre en avant</strong> : ce sont eux qui
+         s'affichent en premier sur l'accueil.</p>
+    </section>
+
+    <!-- ============================================================ 9 -->
+    <section class="etape" id="fermer">
+      <h2><span class="numero">9</span> Fermer la boutique</h2>
+      <figure><img src="/admin/img/guide/reglages.jpg" alt="Interrupteur d'ouverture dans les réglages" loading="lazy">
+        <figcaption>L'interrupteur est en haut des Réglages : c'est celui qu'on cherche en urgence.</figcaption></figure>
+      <p>Congés, rupture générale, préparation d'une nouvelle collection : basculez l'interrupteur.</p>
+      <figure><img src="/admin/img/guide/boutique-fermee.jpg" alt="Page d'attente vue par un visiteur" loading="lazy" class="capture-mobile">
+        <figcaption>Ce que voit un visiteur boutique fermée. Le message se modifie dans les Réglages.</figcaption></figure>
+      <ul>
+        <li>Les visiteurs voient cette page d'attente et <strong>aucune commande ne peut être
+            passée</strong> — le refus vient du serveur, pas d'un bouton caché.</li>
+        <li><strong>Vous, connecté, continuez à voir le vrai site.</strong> Vous pouvez donc
+            préparer votre collection tranquillement et vérifier le rendu avant de rouvrir.</li>
+        <li>Google est prévenu que c'est temporaire et revient plus tard, au lieu de remplacer
+            votre catalogue par la page d'attente dans ses résultats.</li>
+      </ul>
+    </section>
+
+    <!-- =========================================================== 10 -->
+    <section class="etape" id="sauvegarde">
+      <h2><span class="numero">10</span> Sauvegardes</h2>
+      <p>Toute la boutique — produits, commandes, clients, réglages — tient dans un seul fichier.
+         Une sauvegarde, c'est une copie de ce fichier.</p>
+      <ul>
+        <li>Une sauvegarde automatique est faite chaque nuit sur le serveur.</li>
+        <li>Le bouton <strong>Sauvegarder la base maintenant</strong> dans les Réglages en crée
+            une à la demande. Faites-le avant toute grosse modification.</li>
+        <li>Demandez à votre prestataire de récupérer une copie hors du serveur de temps en temps :
+            une sauvegarde qui vit sur la machine qui brûle ne sauve rien.</li>
+      </ul>
+    </section>
+
+    <!-- =========================================================== 11 -->
+    <section class="etape" id="problemes">
+      <h2><span class="numero">11</span> En cas de problème</h2>
+
+      <h3>« Je me connecte et ça me renvoie à l'écran de connexion »</h3>
+      <p>Le navigateur n'a pas gardé le cookie de session. L'écran de connexion affiche lui-même
+         le diagnostic sous le bouton : le plus souvent, le site est en <code>http://</code> alors
+         qu'il devrait être en <code>https://</code>. Transmettez le message affiché à votre
+         prestataire, il saura quoi corriger.</p>
+
+      <h3>« J'ai modifié un produit et le site n'a pas changé »</h3>
+      <p>Rechargez la page en forçant : <kbd>Ctrl</kbd> + <kbd>F5</kbd> sur PC,
+         <kbd>Cmd</kbd> + <kbd>Maj</kbd> + <kbd>R</kbd> sur Mac. Si rien ne change encore,
+         vérifiez que vous avez bien cliqué sur « Enregistrer ».</p>
+
+      <h3>« Le stock est faux »</h3>
+      <p>Regardez le statut des commandes concernées. Le stock ne sort qu'au-delà de « Nouvelle ».
+         Une commande restée en « Nouvelle » n'a rien décompté — c'est normal, elle n'est pas
+         encore une vente. Corrigez la quantité réelle dans la page Stock, elle fait foi.</p>
+
+      <h3>« Un client dit ne pas avoir reçu de confirmation »</h3>
+      <p>Le site n'envoie pas d'e-mail : la confirmation se fait par téléphone, c'est vous qui
+         appelez. Le client garde sa référence de commande, affichée après validation.</p>
+
+      <h3>« Je veux ajouter une page, changer les couleurs… »</h3>
+      <p>Là, il faut votre prestataire. Tout le reste — produits, prix, stock, rayons, promotions,
+         textes d'accueil, mentions légales, ouverture — se fait depuis ces écrans.</p>
+    </section>
+
+    <p class="fin">Ce guide est accessible à tout moment depuis le menu de gauche, rubrique
+       <strong>Guide du site</strong>.</p>
+
+  </main>
+</div>
+<script src="/admin/js/admin.js"></script>
+<script src="/admin/js/guide.js"></script>
+</body>
+</html>

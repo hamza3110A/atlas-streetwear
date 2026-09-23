@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Page d'accueil — Administration ATLAS</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.png" type="image/png" sizes="64x64">
+<link rel="stylesheet" href="/admin/css/admin.css">
+</head>
+<body>
+<div class="app">
+  <main class="principal">
+
+    <div class="entete-page">
+      <div>
+        <h1 class="titre-page">Page d'accueil</h1>
+        <p class="sous-titre">Le grand titre, le bandeau et les articles mis en avant.</p>
+      </div>
+      <a class="btn" href="/" target="_blank" rel="noopener">Voir le résultat ↗</a>
+    </div>
+
+    <form data-form>
+      <section class="panneau">
+        <h2>Grand titre</h2>
+        <p class="mono gris">Le titre se compose de quatre fragments : deux lignes que la marque
+           interrompt en son milieu. Laissez un fragment vide pour le faire disparaître.</p>
+
+        <h3>Ligne du haut</h3>
+        <div class="duo">
+          <div class="champ"><label for="hero_ligne1">À gauche de la marque</label><input id="hero_ligne1" data-cle="hero_ligne1"></div>
+          <div class="champ"><label for="hero_accent1">Mot en rouge</label><input id="hero_accent1" data-cle="hero_accent1"></div>
+        </div>
+        <div class="duo">
+          <div class="champ"><label for="hero_ligne2">À droite de la marque</label><input id="hero_ligne2" data-cle="hero_ligne2"></div>
+          <div class="champ"><label for="hero_accent2">Mot en rouge</label><input id="hero_accent2" data-cle="hero_accent2"></div>
+        </div>
+
+        <h3>Ligne du bas</h3>
+        <div class="duo">
+          <div class="champ"><label for="hero_ligne3">À gauche de la marque</label><input id="hero_ligne3" data-cle="hero_ligne3"></div>
+          <div class="champ"><label for="hero_accent3">Mot en rouge</label><input id="hero_accent3" data-cle="hero_accent3"></div>
+        </div>
+        <div class="duo">
+          <div class="champ"><label for="hero_ligne4">À droite de la marque</label><input id="hero_ligne4" data-cle="hero_ligne4"></div>
+          <div class="champ"><label for="hero_accent4">Mot en rouge</label><input id="hero_accent4" data-cle="hero_accent4"></div>
+        </div>
+
+        <div class="champ"><label for="hero_sous_titre">Petite ligne sous le titre</label>
+          <input id="hero_sous_titre" data-cle="hero_sous_titre"></div>
+
+        <div class="message" data-apercu></div>
+      </section>
+
+      <section class="panneau">
+        <h2>Bandeau en bas d'écran</h2>
+        <label class="bascule">
+          <input type="checkbox" data-cle="bandeau_actif" data-booleen>
+          <span class="piste"></span><span class="texte">Afficher le bandeau</span>
+        </label>
+        <div class="champ"><label for="bandeau_texte">Texte du bandeau</label><input id="bandeau_texte" data-cle="bandeau_texte"></div>
+      </section>
+
+      <button class="btn btn--primaire" type="submit">Enregistrer</button>
+    </form>
+
+    <section class="panneau">
+      <h2>Articles mis en avant</h2>
+      <p class="mono gris">Ces produits s'affichent en premier sur l'accueil. Décochez pour les retirer.</p>
+      <ul class="liste-simple" data-avant><li class="chargement">Chargement…</li></ul>
+    </section>
+
+  </main>
+</div>
+<script src="/admin/js/admin.js"></script>
+<script src="/admin/js/page-accueil.js"></script>
+</body>
+</html>

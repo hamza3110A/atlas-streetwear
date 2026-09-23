@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Produit — ATLAS STREETWEAR</title>
+<meta name="theme-color" content="#0a0a0a">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.png" type="image/png" sizes="64x64">
+<link rel="stylesheet" href="/css/atlas.css">
+</head>
+<body>
+<a class="saut-contenu" href="#contenu">Aller au contenu</a>
+
+<main id="contenu">
+  <article class="fiche" data-fiche hidden>
+    <div class="fiche-visuels" data-visuels></div>
+
+    <div class="fiche-infos">
+      <p class="fil"><a href="/">Accueil</a> / <a href="/boutique" data-lien-rayon>La boutique</a></p>
+
+      <div>
+        <h1 class="titre-section" data-nom></h1>
+        <p class="mono texte-gris" data-reference></p>
+      </div>
+
+      <p class="fiche-prix" data-prix></p>
+
+      <div class="champ-groupe">
+        <span class="champ-label" id="label-taille">Taille</span>
+        <div class="tailles" role="group" aria-labelledby="label-taille" data-tailles></div>
+        <p class="champ-erreur" data-erreur-taille hidden>Choisissez une taille avant d'ajouter au panier.</p>
+      </div>
+
+      <div class="champ-groupe">
+        <span class="champ-label" id="label-quantite">Quantité</span>
+        <div class="compteur" role="group" aria-labelledby="label-quantite">
+          <button type="button" data-moins aria-label="Retirer un article">−</button>
+          <output data-quantite aria-live="polite">1</output>
+          <button type="button" data-plus aria-label="Ajouter un article">+</button>
+        </div>
+      </div>
+
+      <button class="bouton bouton--large bouton--rouge" type="button" data-ajouter>Ajouter au panier</button>
+
+      <div class="encart">
+        <div>
+          <strong>Paiement à la livraison</strong>
+          <p data-livraison>Vous réglez au livreur, en main propre.</p>
+        </div>
+      </div>
+
+      <ul class="liste-points" data-points></ul>
+
+      <div class="replis">
+        <details class="repli" open>
+          <summary>Description</summary>
+          <div class="repli-corps" data-description></div>
+        </details>
+        <details class="repli">
+          <summary>Matière &amp; entretien</summary>
+          <div class="repli-corps" data-matiere></div>
+        </details>
+        <details class="repli">
+          <summary>Livraison &amp; retours</summary>
+          <div class="repli-corps" data-retours></div>
+        </details>
+      </div>
+    </div>
+  </article>
+
+  <section class="section" data-suggestions-bloc hidden>
+    <div class="section-entete"><h2 class="titre-section">Ça va avec</h2></div>
+    <div class="grille-produits" data-suggestions></div>
+  </section>
+
+  <div class="page page-etroite" data-introuvable hidden>
+    <div class="vide">
+      <img src="/img/mark-clair.png" alt="">
+      <h1 class="titre-section">Article introuvable</h1>
+      <p>Ce produit n'existe plus, ou n'est plus en vente.</p>
+      <a class="bouton" href="/boutique">Retour à la boutique</a>
+    </div>
+  </div>
+</main>
+
+<script src="/js/i18n.js"></script>
+<script src="/js/atlas.js"></script>
+<script src="/js/carte-produit.js"></script>
+<script src="/js/produit.js"></script>
+</body>
+</html>

@@ -1,0 +1,620 @@
+/* ==========================================================================
+   ATLAS — administration.
+
+   Même langage visuel que la vitrine : thème CLAIR, Montserrat pour le
+   texte, Archivo Narrow pour les grands titres, mêmes jetons de couleur.
+   Le commerçant passe de son site à son administration sans avoir
+   l'impression de changer de logiciel.
+
+   Interface dense, utilisable au doigt sur un téléphone : il traite ses
+   commandes depuis son comptoir, pas depuis un bureau. Cibles à 44 px
+   partout, aucune mise en page inline dans le HTML.
+   ========================================================================== */
+
+/* ------------------------------------------------------------- polices
+   Les mêmes fichiers que la vitrine, donc déjà dans le cache du
+   navigateur quand le commerçant arrive ici depuis son site : zéro octet
+   supplémentaire. Servies depuis CE serveur — la CSP n'autorise que
+   « font-src 'self' », un appel à Google Fonts serait refusé en silence
+   et tout s'afficherait dans la police système. */
+@font-face {
+  font-family: 'Montserrat';
+  src: url('/fonts/montserrat-400.woff2') format('woff2');
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'Montserrat';
+  src: url('/fonts/montserrat-700.woff2') format('woff2');
+  font-weight: 700; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'Titre';
+  src: url('/fonts/titre-700.woff2') format('woff2');
+  font-weight: 700; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'Space Mono';
+  src: url('/fonts/space-mono-latin-400-normal.woff2') format('woff2');
+  font-weight: 400; font-display: swap;
+}
+@font-face {
+  font-family: 'Space Mono';
+  src: url('/fonts/space-mono-latin-700-normal.woff2') format('woff2');
+  font-weight: 700; font-display: swap;
+}
+
+/* --------------------------------------------------------------- jetons
+   Les noms disent le RÔLE, pas la couleur : « --fond-2 », pas « --blanc ».
+   Changer de thème ne demande que de changer ce bloc.
+
+   Les couleurs d'état ont TOUTES été assombries en passant du thème
+   sombre au thème clair, et ce n'est pas cosmétique — mesuré sur blanc,
+   l'ancienne palette donnait : ambre 2,44:1, gris 2,78:1, vert 3,36:1,
+   violet 3,55:1, bleu 3,79:1. Sous le seuil de 4,5:1, c'est-à-dire
+   illisible pour beaucoup de gens. La nouvelle est entre 5,2 et 7,0:1. */
+:root {
+  --fond:        #f8f8f8;   /* fond général de la page          */
+  --fond-2:      #ffffff;   /* panneaux, barre latérale, modale */
+  --fond-3:      #f2f2f2;   /* champs de saisie, pistes         */
+  --bord:        #e0e0e0;   /* filets et séparateurs            */
+  --bord-fort:   #c9c9c9;   /* bordure qui doit se voir         */
+  --texte:       #2a2a2a;   /* texte courant                    */
+  --encre:       #0a0a0a;   /* titres, boutons pleins           */
+  --gris:        #6a6a6a;   /* texte secondaire — 5,41:1        */
+
+  --rouge:       #c6272d;   /* 5,63:1 sur blanc */
+  --rouge-vif:   #e03038;   /* 4,52:1 — réservé aux survols et aux gros titres */
+  --vert:        #2c7a4d;   /* 5,25:1 */
+  --ambre:       #8a6410;   /* 5,37:1 */
+  --bleu:        #1f5fa8;   /* 6,44:1 */
+  --violet:      #6248a8;   /* 6,97:1 */
+
+  --cible: 44px;
+  --barre: 260px;
+  --mono: 'Space Mono', ui-monospace, 'Courier New', monospace;
+  --titre: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --titre-fort: 'Titre', 'Archivo Narrow', 'Arial Narrow', sans-serif;
+  --t: 180ms ease;
+  --ombre: 0 1px 2px rgba(10,10,10,.04), 0 4px 12px rgba(10,10,10,.04);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--fond);
+  color: var(--texte);
+  font-family: var(--titre);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+body.menu-ouvert { overflow: hidden; }
+
+img { max-width: 100%; display: block; }
+
+/* ------------------------------------------------------------------------
+   L'attribut « hidden » doit toujours gagner.
+
+   Sa valeur par défaut est « display: none », mais la MOINDRE règle qui
+   pose un display sur l'élément l'écrase — et .vide, .message, .modale en
+   posent tous un. Résultat déjà observé sur la vitrine : « PANIER VIDE »
+   s'affichait sous un panier plein, parce que el.hidden = true ne masquait
+   rien. Le JavaScript avait raison, c'est la feuille de style qui l'ignorait.
+   ------------------------------------------------------------------------ */
+[hidden] { display: none !important; }
+
+a { color: inherit; text-decoration: none; }
+button, input, select, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--bleu); outline-offset: 2px; }
+
+.mono { font-family: var(--mono); font-size: 12px; letter-spacing: .08em; }
+.gris { color: var(--gris); }
+.rouge { color: var(--rouge); }
+.vert { color: var(--vert); }
+
+/* ============================================================ STRUCTURE */
+.app { display: grid; grid-template-columns: 1fr; min-height: 100vh; }
+
+.barre-mobile {
+  position: sticky; top: 0; z-index: 60;
+  display: flex; align-items: center; gap: 8px;
+  height: 56px; padding: 0 8px;
+  background: var(--fond-2); border-bottom: 1px solid var(--bord);
+}
+.barre-mobile h1 { font-size: 15px; margin: 0; font-weight: 700; color: var(--encre); }
+
+.icone-bouton {
+  min-width: var(--cible); min-height: var(--cible);
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  background: none; border: 0; cursor: pointer; color: inherit;
+  border-radius: 8px;
+}
+.icone-bouton:hover { background: rgba(10,10,10,.06); }
+
+.burger-admin { flex-direction: column; gap: 5px; }
+.burger-admin span { display: block; width: 20px; height: 2px; background: currentColor; transition: transform var(--t), opacity var(--t); }
+.burger-admin[aria-expanded="true"] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.burger-admin[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+.burger-admin[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* --------------------------------------------------------- barre latérale */
+.lateral {
+  position: fixed; inset: 0 auto 0 0; z-index: 70;
+  width: min(80vw, var(--barre));
+  background: var(--fond-2);
+  border-right: 1px solid var(--bord);
+  transform: translateX(-102%);
+  transition: transform var(--t);
+  display: flex; flex-direction: column;
+  overflow-y: auto;
+}
+.lateral.ouvert { transform: none; }
+
+.voile-admin {
+  position: fixed; inset: 0; z-index: 65;
+  background: rgba(10,10,10,.5);
+  opacity: 0; pointer-events: none; transition: opacity var(--t);
+}
+.voile-admin.ouvert { opacity: 1; pointer-events: auto; }
+
+.lateral-entete {
+  display: flex; align-items: center; gap: 10px;
+  padding: 16px; border-bottom: 1px solid var(--bord);
+  color: var(--encre);
+}
+.lateral-entete img { width: 22px; }
+.lateral-entete strong { font-size: 13px; letter-spacing: .04em; text-transform: uppercase; }
+
+.lateral-nav { padding: 10px 0; flex: 1; }
+.lateral-titre {
+  font-family: var(--mono); font-size: 10px; letter-spacing: .18em;
+  text-transform: uppercase; color: var(--gris);
+  padding: 14px 16px 6px; margin: 0;
+}
+.lateral-lien {
+  display: flex; align-items: center; gap: 12px;
+  min-height: var(--cible); padding: 0 16px;
+  font-size: 14px; color: var(--gris);
+  border-left: 3px solid transparent;
+  transition: background var(--t), color var(--t), border-color var(--t);
+}
+/* Un <button> dans la barre latérale doit ressembler aux liens qui
+   l'entourent : sinon il a l'air d'un bouton système égaré. */
+button.lateral-lien {
+  width: 100%; background: none; border: 0; border-left: 3px solid transparent;
+  text-align: left; cursor: pointer; font-size: 14px;
+}
+.lateral-lien:hover { background: rgba(10,10,10,.05); color: var(--encre); }
+.lateral-lien[aria-current="page"] { color: var(--encre); background: rgba(198,39,45,.07); border-left-color: var(--rouge); font-weight: 700; }
+.lateral-lien svg { flex: 0 0 18px; }
+.lateral-lien .pastille {
+  margin-left: auto; min-width: 22px; height: 20px; padding: 0 6px;
+  background: var(--rouge); color: #fff; border-radius: 999px;
+  font-family: var(--mono); font-size: 11px;
+  display: none; align-items: center; justify-content: center;
+}
+.lateral-lien .pastille.visible { display: inline-flex; }
+
+.lateral-pied { border-top: 1px solid var(--bord); padding: 12px 16px 20px; }
+.lateral-pied .qui { font-size: 13px; margin: 0 0 4px; color: var(--encre); }
+.lateral-pied .role { font-family: var(--mono); font-size: 10px; color: var(--gris); text-transform: uppercase; letter-spacing: .12em; }
+
+/* ------------------------------------------------------- zone principale */
+.principal { padding: 18px 14px 64px; min-width: 0; }
+
+/* Les titres de page reprennent l'Archivo Narrow de la vitrine : c'est le
+   seul élément qui rappelle le grand titre de l'accueil. */
+.titre-page {
+  font-family: var(--titre-fort); font-weight: 700;
+  font-size: clamp(24px, 5.5vw, 34px); text-transform: uppercase; letter-spacing: 0;
+  margin: 0 0 4px; color: var(--encre);
+}
+.sous-titre { color: var(--gris); font-size: 14px; margin: 0 0 20px; }
+
+.entete-page {
+  display: flex; flex-wrap: wrap; gap: 12px;
+  align-items: flex-start; justify-content: space-between; margin-bottom: 18px;
+}
+
+/* ============================================================== BLOCS */
+.panneau {
+  background: var(--fond-2); border: 1px solid var(--bord);
+  border-radius: 12px; padding: 16px; margin-bottom: 16px;
+  box-shadow: var(--ombre);
+}
+.panneau h2 { font-size: 15px; margin: 0 0 12px; font-weight: 700; color: var(--encre); }
+.panneau > h2:first-child { margin-top: 0; }
+
+.grille-stats { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; margin-bottom: 16px; }
+.stat {
+  background: var(--fond-2); border: 1px solid var(--bord); border-radius: 12px; padding: 14px;
+  box-shadow: var(--ombre);
+}
+.stat .valeur { font-family: var(--titre-fort); font-weight: 700; font-size: clamp(22px, 5vw, 30px); letter-spacing: 0; color: var(--encre); }
+.stat .libelle { font-family: var(--mono); font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--gris); }
+.stat--alerte { border-color: var(--rouge); }
+
+/* ============================================================= BOUTONS */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: var(--cible); padding: 0 18px;
+  border: 1px solid var(--bord-fort); border-radius: 10px;
+  background: var(--fond-2); color: var(--encre);
+  font-size: 14px; font-weight: 700; cursor: pointer;
+  transition: background var(--t), border-color var(--t), opacity var(--t);
+  white-space: nowrap;
+}
+.btn:hover:not(:disabled) { background: var(--fond-3); border-color: var(--encre); }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+.btn--primaire { background: var(--rouge); border-color: var(--rouge); color: #fff; }
+.btn--primaire:hover:not(:disabled) { background: var(--rouge-vif); border-color: var(--rouge-vif); }
+/* Le bouton « danger » n'est pas rempli : il ne doit pas attirer le doigt
+   autant que l'action principale, mais rester parfaitement lisible. */
+.btn--danger { color: var(--rouge); border-color: rgba(198,39,45,.45); background: var(--fond-2); }
+.btn--danger:hover:not(:disabled) { background: rgba(198,39,45,.08); border-color: var(--rouge); }
+/* « Petit » décrit la place qu'il prend à l'écran, pas la place qu'il
+   offre au doigt. À 36 px de haut, « Modifier » et « Suppr. » côte à côte
+   dans une ligne de tableau se ratent une fois sur trois sur un téléphone.
+   44 px, comme tout le reste — huit pixels de plus par ligne, et le
+   commerçant arrête de zoomer pour cliquer. */
+.btn--petit { min-height: var(--cible); padding: 0 12px; font-size: 13px; border-radius: 8px; }
+.btn--large { width: 100%; }
+
+.groupe-boutons { display: flex; flex-wrap: wrap; gap: 8px; }
+
+/* ========================================================== FORMULAIRES */
+.champ { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+.champ label { font-family: var(--mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--gris); }
+.champ input, .champ select, .champ textarea {
+  min-height: var(--cible);
+  background: var(--fond-2); border: 1px solid var(--bord-fort); border-radius: 10px;
+  padding: 10px 12px; font-size: 16px;   /* 16px : en dessous, iOS zoome au focus */
+  width: 100%; color: var(--texte);
+}
+.champ textarea { min-height: 90px; resize: vertical; font-size: 15px; line-height: 1.55; }
+.champ input:focus, .champ select:focus, .champ textarea:focus { border-color: var(--bleu); outline: none; box-shadow: 0 0 0 3px rgba(31,95,168,.15); }
+.champ .aide { font-family: var(--mono); font-size: 11px; color: var(--gris); }
+/* Les mentions légales non renseignées se voient en rouge tant qu'elles
+   sont vides — c'est la seule façon qu'elles finissent par être remplies. */
+.champ--requis-vide input, .champ--requis-vide textarea { border-color: var(--rouge); }
+.champ--requis-vide label { color: var(--rouge); }
+.champ--requis-vide label::after { content: ' — à renseigner'; font-size: 10px; }
+
+.duo { display: grid; grid-template-columns: 1fr; gap: 0 14px; }
+.trio { display: grid; grid-template-columns: 1fr; gap: 0 14px; }
+
+/* La taille minimale automatique d'un enfant de grille vaut la largeur de
+   son contenu. Un tableau à min-width: 560px pousse donc SA COLONNE à
+   560 px, et toute la page déborde de 218 px sur un téléphone — alors que
+   le tableau était censé défiler dans sa propre boîte. min-width: 0 rend
+   aux enfants le droit de rétrécir. Trouvé en mesurant la page réelle. */
+.duo > *, .trio > *, .grille-stats > *, .principal, .app > * { min-width: 0; }
+
+.bascule { display: flex; align-items: center; gap: 12px; min-height: var(--cible); cursor: pointer; }
+.bascule input { position: absolute; opacity: 0; width: 0; height: 0; }
+/* La piste éteinte doit être plus foncée que le bouton blanc qui glisse
+   dessus, sinon l'interrupteur disparaît sur fond clair. --bord (#e0e0e0)
+   ne suffisait pas : 1,2:1 contre le rond blanc. */
+.bascule .piste {
+  width: 52px; height: 30px; border-radius: 999px;
+  background: var(--bord-fort); position: relative; transition: background var(--t); flex: 0 0 auto;
+}
+.bascule .piste::after {
+  content: ''; position: absolute; top: 3px; left: 3px;
+  width: 24px; height: 24px; border-radius: 50%; background: #fff;
+  box-shadow: 0 1px 3px rgba(10,10,10,.3);
+  transition: transform var(--t);
+}
+.bascule input:checked + .piste { background: var(--vert); }
+.bascule input:checked + .piste::after { transform: translateX(22px); }
+.bascule input:focus-visible + .piste { outline: 2px solid var(--bleu); outline-offset: 2px; }
+.bascule .texte { font-size: 14px; }
+
+/* =============================================================== TABLES */
+/* Les tableaux larges défilent DANS leur conteneur : la page, elle, ne
+   défile jamais horizontalement. */
+.table-boite { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 0 -16px; padding: 0 16px; }
+table { width: 100%; border-collapse: collapse; min-width: 560px; }
+/* Un tableau de trois colonnes n'a pas besoin de 560 px : il tient sur un
+   téléphone, autant lui éviter un défilement inutile. */
+table.compacte { min-width: 0; }
+th, td { text-align: left; padding: 10px 10px; border-bottom: 1px solid var(--bord); vertical-align: middle; }
+th {
+  font-family: var(--mono); font-size: 10px; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--gris); font-weight: 400; white-space: nowrap;
+}
+tbody tr:hover { background: rgba(10,10,10,.035); }
+td.num, th.num { text-align: right; font-family: var(--mono); font-size: 13px; white-space: nowrap; }
+
+.vignette { width: 44px; height: 58px; object-fit: cover; border-radius: 6px; background: var(--fond-3); }
+
+/* ============================================================ ÉTIQUETTES */
+.etiq {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase;
+  padding: 4px 8px; border-radius: 999px; border: 1px solid var(--bord); white-space: nowrap;
+}
+.etiq::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.etiq--nouvelle       { color: var(--bleu);   border-color: rgba(31,95,168,.35);  background: rgba(31,95,168,.06); }
+.etiq--confirmee      { color: var(--ambre);  border-color: rgba(138,100,16,.35); background: rgba(138,100,16,.06); }
+.etiq--en_preparation { color: var(--ambre);  border-color: rgba(138,100,16,.35); background: rgba(138,100,16,.06); }
+.etiq--expediee       { color: var(--violet); border-color: rgba(98,72,168,.35);  background: rgba(98,72,168,.06); }
+.etiq--livree         { color: var(--vert);   border-color: rgba(44,122,77,.35);  background: rgba(44,122,77,.06); }
+.etiq--annulee        { color: var(--gris);   border-color: var(--bord);          background: var(--fond-3); }
+
+.stock-pastille { font-family: var(--mono); font-size: 13px; }
+.stock-0  { color: var(--rouge); font-weight: 700; }
+.stock-bas { color: var(--ambre); }
+
+/* Une ligne par pays servi, dans les colonnes Prix et Stock de la liste
+   des produits. Les deux colonnes empilent les pays dans le même ordre,
+   d'où la hauteur de ligne identique : c'est elle qui fait que la
+   deuxième ligne de « Prix » et la deuxième ligne de « Stock »
+   correspondent bien au même pays. */
+.ligne-marche { line-height: 1.7; white-space: nowrap; }
+.ligne-marche + .ligne-marche { border-top: 1px dashed var(--bord); }
+.petit { font-size: 11px; }
+
+/* ============================================================= MESSAGES */
+.message {
+  border: 1px solid var(--bord); border-left: 3px solid var(--bleu);
+  background: rgba(31,95,168,.06);
+  border-radius: 10px; padding: 12px 14px; margin-bottom: 14px; font-size: 14px;
+}
+.message--erreur { border-left-color: var(--rouge); background: rgba(198,39,45,.06); }
+.message--alerte { border-left-color: var(--ambre); background: rgba(138,100,16,.07); }
+.message[hidden] { display: none; }
+.message ul { margin: 6px 0 0; padding-left: 18px; }
+
+/* Le toast est le seul élément volontairement sombre : il passe DEVANT la
+   page, il doit s'en détacher franchement. */
+.toast {
+  position: fixed; left: 50%; bottom: 20px; transform: translate(-50%, 16px);
+  z-index: 120; background: var(--encre); color: #fff;
+  padding: 12px 18px; border-radius: 10px; font-size: 14px; font-weight: 700;
+  opacity: 0; pointer-events: none; transition: opacity var(--t), transform var(--t);
+  max-width: calc(100vw - 32px); text-align: center;
+  box-shadow: 0 8px 24px rgba(10,10,10,.25);
+}
+.toast.visible { opacity: 1; transform: translate(-50%, 0); }
+.toast--erreur { background: var(--rouge); color: #fff; }
+
+/* ============================================================ MODALE */
+.modale {
+  position: fixed; inset: 0; z-index: 130;
+  background: rgba(10,10,10,.55);
+  display: grid; place-items: end center;
+  opacity: 0; pointer-events: none; transition: opacity var(--t);
+  padding: 0;
+}
+.modale.ouverte { opacity: 1; pointer-events: auto; }
+.modale-boite {
+  background: var(--fond-2); border: 1px solid var(--bord);
+  border-radius: 16px 16px 0 0;
+  width: 100%; max-height: 92vh; overflow-y: auto;
+  padding: 18px 16px calc(18px + env(safe-area-inset-bottom));
+  transform: translateY(20px); transition: transform var(--t);
+  box-shadow: 0 -10px 40px rgba(10,10,10,.18);
+}
+.modale.ouverte .modale-boite { transform: none; }
+.modale-entete { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+.modale-entete h2 { margin: 0; font-size: 18px; color: var(--encre); }
+.modale-pied { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 18px; }
+
+/* ============================================================== DIVERS */
+.recherche-boite { position: relative; margin-bottom: 14px; max-width: 460px; }
+.recherche-boite input {
+  width: 100%; min-height: var(--cible); padding: 10px 12px 10px 40px;
+  background: var(--fond-2); border: 1px solid var(--bord-fort); border-radius: 10px; font-size: 16px;
+  color: var(--texte);
+}
+.recherche-boite input:focus { border-color: var(--bleu); outline: none; box-shadow: 0 0 0 3px rgba(31,95,168,.15); }
+.recherche-boite svg { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: var(--gris); pointer-events: none; }
+
+.vide-admin { text-align: center; padding: 48px 16px; color: var(--gris); }
+.vide-admin img { width: 48px; opacity: .35; margin: 0 auto 14px; }
+
+.chargement { padding: 40px; text-align: center; color: var(--gris); font-family: var(--mono); font-size: 12px; }
+
+.liste-simple { list-style: none; margin: 0; padding: 0; }
+.liste-simple li {
+  display: flex; align-items: center; gap: 12px;
+  min-height: var(--cible); padding: 8px 0; border-bottom: 1px solid var(--bord);
+}
+.liste-simple li:last-child { border-bottom: 0; }
+
+/* --------------------------------------------- liens dans les tableaux
+   Un numéro de téléphone ou une référence de commande fait 17 px de haut :
+   c'est la hauteur de son texte. On agrandit la ZONE CLIQUABLE sans
+   toucher à la mise en page, par un rembourrage compensé d'une marge
+   négative — la ligne du tableau ne bouge pas d'un pixel, la cible passe
+   de 17 à 44 px. Relevé sur les sept sélecteurs qui tombaient sous le
+   seuil : téléphone client, lien de rayon, référence de commande,
+   « Compléter » du tableau de bord. */
+td a,
+.liste-simple a,
+.message a {
+  display: inline-block;
+  padding: 13px 2px;
+  margin: -13px -2px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+/* Sauf ceux qui sont déjà des boutons : ils ont leur propre hauteur. */
+td a.btn, .liste-simple a.btn, .message a.btn {
+  display: inline-flex; padding: 0 18px; margin: 0; text-decoration: none;
+}
+.pousse-droite { margin-left: auto; }
+
+.barres { display: grid; gap: 6px; }
+.barre-jour { display: grid; grid-template-columns: 74px 1fr auto; gap: 10px; align-items: center; font-family: var(--mono); font-size: 11px; }
+.barre-piste { height: 8px; background: var(--fond-3); border: 1px solid var(--bord); border-radius: 999px; overflow: hidden; }
+.barre-piste span { display: block; height: 100%; width: var(--valeur, 0%); background: var(--rouge); border-radius: 999px; }
+
+/* ------------------------------------------------------- page connexion */
+.connexion {
+  min-height: 100vh; display: grid; place-items: center; padding: 24px;
+  background: var(--fond);
+}
+.connexion-boite {
+  width: 100%; max-width: 380px;
+  background: var(--fond-2); border: 1px solid var(--bord); border-radius: 16px; padding: 26px 22px;
+  box-shadow: 0 2px 4px rgba(10,10,10,.04), 0 12px 32px rgba(10,10,10,.06);
+}
+.connexion-boite img { width: 54px; margin: 0 auto 16px; }
+.connexion-boite h1 { font-family: var(--titre-fort); font-size: 26px; text-transform: uppercase; text-align: center; margin: 0 0 4px; color: var(--encre); }
+.connexion-boite .sous { text-align: center; color: var(--gris); font-size: 13px; margin: 0 0 22px; }
+.diagnostic { font-family: var(--mono); font-size: 10px; color: var(--gris); margin-top: 16px; line-height: 1.6; }
+
+/* ------------------------------------------------- éditeur de variantes */
+.ligne-variante {
+  /* Deux colonnes depuis que la quantité a quitté cette fiche : la
+     taille, et le bouton qui la retire. La colonne de 90 px qui portait
+     le champ « Stock » laissait un vide à droite de chaque ligne. */
+  display: grid; grid-template-columns: 1fr var(--cible); gap: 8px; align-items: end;
+  padding-bottom: 10px; margin-bottom: 10px; border-bottom: 1px solid var(--bord);
+}
+.ligne-variante .champ { margin-bottom: 0; }
+
+.galerie { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 8px; }
+.galerie-item { position: relative; border-radius: 8px; overflow: hidden; background: var(--fond-3); border: 1px solid var(--bord); aspect-ratio: 3/4; }
+.galerie-item img { width: 100%; height: 100%; object-fit: cover; }
+/* Le bouton de suppression est posé SUR la photo : il reste sombre, une
+   photo peut être de n'importe quelle couleur. */
+.galerie-item button {
+  position: absolute; top: 4px; right: 4px;
+  min-width: 32px; min-height: 32px; border-radius: 8px;
+  background: rgba(10,10,10,.78); border: 0; color: #fff; cursor: pointer;
+}
+.galerie-item button:hover { background: var(--rouge); }
+.depot {
+  border: 1px dashed var(--bord-fort); border-radius: 12px; background: var(--fond-3);
+  padding: 22px; text-align: center; color: var(--gris); cursor: pointer;
+  min-height: 96px; display: grid; place-items: center;
+}
+.depot:hover, .depot.survol { border-color: var(--bleu); color: var(--bleu); background: rgba(31,95,168,.05); }
+
+/* --------------------------------------------------------- ligne stock */
+/* Une ligne = une taille. La quantité se corrige sur place : au retour
+   d'un réassort, on descend la liste, on tape, Entrée. */
+.champ-stock {
+  width: 84px; min-height: var(--cible); text-align: center;
+  background: var(--fond-2); border: 1px solid var(--bord-fort); border-radius: 8px;
+  font-family: var(--mono); font-size: 16px; padding: 6px; color: var(--texte);
+}
+.champ-stock:focus { border-color: var(--bleu); outline: none; box-shadow: 0 0 0 3px rgba(31,95,168,.15); }
+.champ-stock.enregistre { border-color: var(--vert); background: rgba(44,122,77,.08); }
+
+/* ========================================================== GRAPHIQUE
+   Dessiné en SVG sans bibliothèque : le projet n'a pas d'étape de
+   compilation, et charger 200 Ko de librairie pour trente barres serait
+   un mauvais échange sur une connexion tunisienne en 3G. */
+.graphe { width: 100%; overflow: hidden; }
+.graphe svg { width: 100%; height: clamp(170px, 34vw, 240px); display: block; }
+.graphe .axe { stroke: var(--bord); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.graphe .barres-visiteurs rect { fill: var(--encre); }
+.graphe .barres-visiteurs rect:hover { fill: var(--rouge); }
+.graphe .ligne-commandes {
+  fill: none; stroke: var(--rouge); stroke-width: 2;
+  vector-effect: non-scaling-stroke;   /* sinon preserveAspectRatio="none" écrase le trait */
+  stroke-linejoin: round;
+}
+.chemin-page { display: block; font-size: 11px; margin-top: 2px; }
+
+.graphe .etiquettes text {
+  font-family: var(--mono); font-size: 11px; fill: var(--gris);
+}
+
+/* ============================================ GESTION DES UTILISATEURS */
+/* Le commerçant doit pouvoir créer un compte pour son employé et le
+   révoquer le jour où il part, sans appeler personne. */
+.ligne-utilisateur { display: flex; align-items: center; gap: 12px; }
+.ligne-utilisateur .qui { display: grid; gap: 2px; min-width: 0; }
+.ligne-utilisateur .qui strong { font-size: 14px; color: var(--encre); }
+.ligne-utilisateur .qui span { font-family: var(--mono); font-size: 11px; color: var(--gris); overflow-wrap: anywhere; }
+.moi { font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--vert); }
+
+/* ================================================== POINTS DE RUPTURE */
+@media (min-width: 640px) {
+  .duo  { grid-template-columns: 1fr 1fr; }
+  .trio { grid-template-columns: repeat(3, 1fr); }
+  .grille-stats { grid-template-columns: repeat(4, minmax(0,1fr)); }
+  .modale { place-items: center; padding: 24px; }
+  .modale-boite { max-width: 640px; border-radius: 16px; transform: scale(.97); box-shadow: 0 20px 60px rgba(10,10,10,.2); }
+  .modale.ouverte .modale-boite { transform: none; }
+  .principal { padding: 24px 24px 64px; }
+  .table-boite { margin: 0 -24px; padding: 0 24px; }
+}
+
+@media (min-width: 1000px) {
+  .app { grid-template-columns: var(--barre) 1fr; }
+  .barre-mobile { display: none; }
+  .lateral { position: sticky; top: 0; height: 100vh; transform: none; width: var(--barre); }
+  .voile-admin { display: none; }
+  .principal { padding: 32px 32px 64px; }
+  .table-boite { margin: 0; padding: 0; }
+}
+
+@media (min-width: 1300px) {
+  .principal { padding: 36px 44px 72px; }
+}
+
+
+/* ----------------------------------------------- entrepôt (page Stock)
+   Un bandeau, pas une case discrète. La question « quel entrepôt suis-je
+   en train de modifier ? » doit trouver sa réponse sans qu'on la pose :
+   se tromper ici ne produit aucun message d'erreur, seulement un
+   inventaire faux découvert des semaines plus tard. */
+.panneau--entrepot { display: grid; gap: 6px; }
+.champ--entrepot { display: grid; gap: 6px; max-width: 420px; }
+.champ--entrepot span { font-family: var(--mono); font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: var(--gris); }
+.champ--entrepot select { min-height: var(--cible); }
+
+/* ---------------------------------------------------------- pays servis
+   Une carte par pays, et l'interrupteur au même endroit que celui de la
+   boutique : c'est le même geste, il doit se chercher au même endroit. */
+.carte-pays {
+  border: 1px solid var(--bord); border-radius: 3px;
+  padding: 16px; margin-bottom: 14px;
+  display: grid; gap: 12px;
+}
+.carte-pays--ferme { background: #fafafa; }
+.carte-pays-entete { display: flex; flex-wrap: wrap; gap: 10px; align-items: baseline; justify-content: space-between; }
+.carte-pays-titre { font-weight: 700; font-size: 16px; margin: 0; }
+.carte-pays-devise {
+  font-family: var(--mono); font-size: 11px; letter-spacing: .16em;
+  text-transform: uppercase; color: var(--gris);
+}
+.carte-pays .etat-pays {
+  font-family: var(--mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
+}
+.etat-pays--ouvert { color: var(--vert); }
+.etat-pays--ferme { color: var(--ambre); }
+/* La ligne qui dit si le pays est PRÊT. Sans elle, l'interrupteur est un
+   pari : on ouvre, et on découvre la boutique vide par un client. */
+.pays-pret { font-family: var(--mono); font-size: 11px; color: var(--gris); }
+.pays-pret--non { color: var(--ambre); }
+
+/* Le bloc « prix dans les autres pays » de la fiche produit. */
+.bloc-pays {
+  border: 1px solid var(--bord); border-radius: 3px;
+  padding: 14px 16px; margin: 4px 0 14px;
+}
+.bloc-pays legend {
+  font-family: var(--mono); font-size: 11px; letter-spacing: .16em;
+  text-transform: uppercase; color: var(--gris); padding: 0 6px;
+}
+
+/* --------------------------------- tuiles d'argent à plusieurs monnaies
+   Deux montants empilés dans une tuile, quand la boutique encaisse dans
+   deux devises. On ne les additionne pas — sans taux de change, la somme
+   d'un dinar et d'un dirham ne veut rien dire — on les met l'un sous
+   l'autre. La seconde ligne est plus discrète : elle complète, elle ne
+   concurrence pas. */
+.valeur-monnaie { display: block; }
+.valeur-monnaie--suite {
+  font-size: .62em;
+  color: var(--gris);
+  margin-top: 2px;
+}

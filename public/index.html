@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ATLAS STREETWEAR — Born from the mountains, built for the streets</title>
+<meta name="description" content="Streetwear tunisien. Tee-shirts, hoodies et casquettes en coton lourd. Paiement à la livraison partout en Tunisie.">
+<meta name="theme-color" content="#0a0a0a">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.png" type="image/png" sizes="64x64">
+<link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
+<meta property="og:title" content="ATLAS STREETWEAR">
+<meta property="og:description" content="Born from the mountains, built for the streets.">
+<meta property="og:image" content="/img/og.jpg">
+<meta property="og:type" content="website">
+<!-- La police du grand titre, demandée avant même que la CSS soit lue.
+     C'était Montserrat 800 ici : une graisse que le site n'utilise nulle
+     part. Le navigateur téléchargeait 16 Ko pour rien, puis 404 le jour où
+     le fichier a disparu. -->
+<link rel="preload" as="font" type="font/woff2" href="/fonts/titre-700.woff2" crossorigin>
+<!-- Un preload par taille d'écran. Sans les media, le téléphone
+     téléchargeait AUSSI la version bureau : 1,2 Mo pour un seul fond. -->
+<link rel="preload" as="image" href="/img/hero-mobile-2.jpg" media="(max-width: 899px)">
+<link rel="preload" as="image" href="/img/hero-desktop-2.jpg" media="(min-width: 900px)">
+<link rel="stylesheet" href="/css/atlas.css">
+</head>
+<body>
+<a class="saut-contenu" href="#contenu">Aller au contenu</a>
+
+<main id="contenu">
+
+  <!-- ============================================================ HÉROS -->
+  <section class="heros" data-sur-photo>
+    <div class="heros-fond" role="presentation"></div>
+
+    <!-- Deux lignes, chacune centrée, avec un creux au milieu où se pose
+         la marque : c'est la composition du fichier de design. Les quatre
+         fragments se règlent depuis Administration → Page d'accueil. -->
+    <div class="heros-contenu">
+      <h1 class="heros-titre">
+        <span class="heros-ligne">
+          <span class="heros-mot heros-mot--hg" data-hero="1">BORN FROM</span>
+          <span class="heros-creux" aria-hidden="true"></span>
+          <span class="heros-mot heros-mot--hd" data-hero="2">THE <span class="accent">MOUNTAINS</span></span>
+        </span>
+        <span class="heros-ligne">
+          <span class="heros-mot heros-mot--bg" data-hero="3">BUILT FOR THE <span class="accent">STREETS</span></span>
+          <span class="heros-creux" aria-hidden="true"></span>
+          <span class="heros-mot heros-mot--bd" data-hero="4">MADE TO MOVE</span>
+        </span>
+
+        <!-- Dans le titre, pas à côté : ainsi la marque se centre sur les
+             DEUX LIGNES et non sur tout le bloc — sinon toute marge
+             ajoutée en dessous la fait redescendre avec. -->
+        <img class="heros-marque" src="/img/mark.png" alt="" width="240" height="380" fetchpriority="high">
+      </h1>
+
+      <p class="heros-sous">Tunisie — paiement à la livraison</p>
+    </div>
+
+    <a class="heros-chevron" href="#collection" aria-label="Voir la collection">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+        <path d="m6 9 6 6 6-6"></path>
+      </svg>
+    </a>
+  </section>
+
+  <!-- =========================================================== CRÊTE
+       Remplace le ruban défilant.
+
+       L'ancien ruban avait deux défauts. Le premier se voyait : son texte
+       était dessiné en contour gris très pâle sur blanc — mesuré à 2,35:1
+       sur les pixels réellement affichés, pour un minimum de 3:1 à cette
+       taille. Le nouveau repère est à 19,8:1. Le second ne se
+       voyait pas : il annonçait « LIVRÉ EN 48 H » écrit en dur, alors que
+       le délai réglé pour la Tunisie est « 2 à 4 jours ouvrables » et
+       celui des Émirats « environ une semaine ». Le ruban mentait dans
+       les DEUX pays servis, et aucun réglage ne pouvait le corriger.
+
+       Ici, la ligne de crête sépare le héros de la collection, et le
+       repère posé dessus est écrit par le serveur à partir du marché du
+       visiteur. Changer le délai dans l'administration change cette
+       phrase ; ouvrir un pays de plus lui donne la sienne. -->
+  <div class="crete">
+    <p class="crete-repere" data-crete hidden>
+      <span class="crete-tige" aria-hidden="true"></span>
+      <span class="crete-eyebrow" data-crete-pays></span>
+      <span class="crete-delai" data-crete-delai></span>
+    </p>
+    <!-- Le tracé est anguleux, comme l'étoile de la marque : ce sont des
+         segments droits, pas des courbes. Le « preserveAspectRatio=none »
+         est voulu — la crête s'étire à la largeur de l'écran. -->
+    <svg class="crete-ligne" viewBox="0 0 1200 160" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+      <path class="crete-masse" d="M0,140 L140,92 L300,124 L470,28 L640,96 L790,52 L960,118 L1110,70 L1200,104 L1200,160 L0,160 Z"/>
+      <path class="crete-arete" d="M0,140 L140,92 L300,124 L470,28 L640,96 L790,52 L960,118 L1110,70 L1200,104"/>
+    </svg>
+  </div>
+
+  <!-- ====================================================== COLLECTION -->
+  <section class="section" id="collection">
+    <div class="section-entete">
+      <div>
+        <h2 class="titre-section">La collection</h2>
+        <p>Pièces produites en petite série. Quand une taille part, elle reste affichée : elle revient au réassort.</p>
+      </div>
+      <a class="lien-fleche" href="/boutique">Tout voir
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
+      </a>
+    </div>
+
+    <div class="grille-produits" data-vitrine>
+      <div class="squelette squelette-carte"></div>
+      <div class="squelette squelette-carte"></div>
+      <div class="squelette squelette-carte"></div>
+      <div class="squelette squelette-carte"></div>
+    </div>
+  </section>
+
+  <!-- ======================================================= MANIFESTE -->
+  <section class="manifeste">
+    <div>
+      <h2 class="titre-section">Le bouquetin<br><span class="accent">ne redescend pas</span></h2>
+      <p>Le mouflon de l'Atlas tient sur des pentes où rien d'autre ne tient. C'est ce qu'on demande à un vêtement : tenir. Coton lourd, coutures doublées, impressions qui survivent au trentième lavage.</p>
+    </div>
+    <div class="trio">
+      <article class="trio-item">
+        <span class="trio-num">01</span>
+        <h3>Matière d'abord</h3>
+        <p>220 g/m² sur les tee-shirts, 400 g/m² sur les hoodies. On ne descend pas en dessous.</p>
+      </article>
+      <article class="trio-item">
+        <span class="trio-num">02</span>
+        <h3>Petites séries</h3>
+        <p>Entre 60 et 120 pièces par référence. Pas de stock dormant, pas de soldes permanentes.</p>
+      </article>
+      <article class="trio-item">
+        <span class="trio-num">03</span>
+        <h3>Payé à la porte</h3>
+        <p>Vous réglez au livreur, en main propre. Aucune carte à saisir nulle part.</p>
+      </article>
+    </div>
+  </section>
+
+</main>
+
+<script src="/js/i18n.js"></script>
+<script src="/js/atlas.js"></script>
+<script src="/js/carte-produit.js"></script>
+<script src="/js/accueil.js"></script>
+</body>
+</html>

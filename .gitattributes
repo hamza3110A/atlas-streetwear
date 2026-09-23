@@ -1,0 +1,18 @@
+# Les fins de ligne.
+#
+# Le projet est écrit sous Windows et tourne sous Linux. Sans cette
+# consigne, Git convertit en CRLF à chaque va-et-vient : les fichiers
+# apparaissent modifiés sans qu'on y ait touché, et systemd comme nginx
+# n'aiment pas les retours chariot dans leurs fichiers de configuration.
+#
+# « eol=lf » fixe la règle une fois pour toutes : tout est rangé ET
+# ressorti en LF, quelle que soit la machine.
+* text=auto eol=lf
+
+# Le binaire n'est jamais converti. Le dire explicitement évite qu'une
+# image ou une police soit corrompue par une conversion de texte.
+*.png  binary
+*.jpg  binary
+*.webp binary
+*.woff2 binary
+*.db   binary

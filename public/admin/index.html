@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tableau de bord — Administration ATLAS</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.png" type="image/png" sizes="64x64">
+<link rel="stylesheet" href="/admin/css/admin.css">
+</head>
+<body>
+<div class="app">
+  <main class="principal">
+
+    <div class="entete-page">
+      <div>
+        <h1 class="titre-page">Tableau de bord</h1>
+        <p class="sous-titre" data-bonjour>Bonjour.</p>
+      </div>
+      <div class="groupe-boutons">
+        <a class="btn" href="/" target="_blank" rel="noopener">Voir la boutique ↗</a>
+        <a class="btn btn--primaire" href="/admin/commandes.html">Traiter les commandes</a>
+      </div>
+    </div>
+
+    <div class="message message--alerte" data-legal hidden></div>
+    <div class="message message--erreur" data-fermee hidden></div>
+
+    <div class="grille-stats" data-stats></div>
+
+    <!-- Masqué tant qu'un seul pays est ouvert : ce serait répéter les
+         tuiles du dessus. -->
+    <section class="panneau" data-par-marche hidden></section>
+
+    <div class="duo">
+      <section class="panneau">
+        <h2>Dernières commandes</h2>
+        <div class="table-boite"><table class="compacte" data-dernieres><tbody></tbody></table></div>
+      </section>
+
+      <section class="panneau">
+        <h2>Stock faible</h2>
+        <ul class="liste-simple" data-ruptures></ul>
+      </section>
+    </div>
+
+    <section class="panneau">
+      <h2>Ventes des 14 derniers jours</h2>
+      <div class="barres" data-ventes></div>
+    </section>
+
+  </main>
+</div>
+<script src="/admin/js/admin.js"></script>
+<script src="/admin/js/tableau-de-bord.js"></script>
+</body>
+</html>

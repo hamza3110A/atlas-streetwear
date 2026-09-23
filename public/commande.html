@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Finaliser la commande — ATLAS STREETWEAR</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0a0a0a">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.png" type="image/png" sizes="64x64">
+<link rel="stylesheet" href="/css/atlas.css">
+</head>
+<body data-sans-bandeau>
+<a class="saut-contenu" href="#contenu">Aller au contenu</a>
+
+<main class="page page-large" id="contenu">
+  <p class="fil"><a href="/panier">Panier</a> / Commande</p>
+  <h1 class="titre-section">Finaliser la commande</h1>
+
+  <div class="alerte" data-alerte hidden></div>
+
+  <div class="disposition-panier" data-disposition hidden>
+    <section aria-label="Vos coordonnées">
+      <form class="formulaire" data-form novalidate>
+        <div class="champ">
+          <label for="nom">Nom et prénom *</label>
+          <input type="text" id="nom" name="nom" required maxlength="120" autocomplete="name" placeholder="Yassine Ben Salah">
+        </div>
+
+        <div class="duo">
+          <div class="champ">
+            <label for="telephone">Téléphone *</label>
+            <input type="tel" id="telephone" name="telephone" required inputmode="tel" autocomplete="tel" placeholder="20 123 456">
+            <span class="champ-aide">8 chiffres. C'est par ce numéro que le livreur vous joindra.</span>
+          </div>
+          <div class="champ">
+            <label for="email">E-mail (facultatif)</label>
+            <input type="email" id="email" name="email" maxlength="150" autocomplete="email" placeholder="vous@exemple.tn">
+          </div>
+        </div>
+
+        <div class="champ">
+          <label for="adresse">Adresse de livraison *</label>
+          <textarea id="adresse" name="adresse" required maxlength="300" autocomplete="street-address" placeholder="Rue, numéro, immeuble, étage, point de repère"></textarea>
+        </div>
+
+        <div class="duo">
+          <div class="champ">
+            <label for="gouvernorat">Gouvernorat *</label>
+            <select id="gouvernorat" name="gouvernorat" required autocomplete="address-level1">
+              <option value="">Choisir…</option>
+            </select>
+          </div>
+          <div class="champ">
+            <label for="ville">Ville / délégation *</label>
+            <input type="text" id="ville" name="ville" required maxlength="80" autocomplete="address-level2" placeholder="La Marsa">
+          </div>
+        </div>
+
+        <div class="duo">
+          <div class="champ">
+            <label for="code_postal">Code postal</label>
+            <input type="text" id="code_postal" name="code_postal" maxlength="10" inputmode="numeric" autocomplete="postal-code" placeholder="2078">
+          </div>
+        </div>
+
+        <div class="champ">
+          <label for="note_client">Note pour le livreur (facultatif)</label>
+          <textarea id="note_client" name="note_client" maxlength="500" placeholder="Sonner au 2e étage, appeler avant de passer…"></textarea>
+        </div>
+
+        <div class="encart encart--rouge">
+          <div>
+            <strong>Paiement à la livraison</strong>
+            <p>Vous payez en espèces au livreur, à la remise du colis. Aucune carte bancaire n'est demandée sur ce site.</p>
+          </div>
+        </div>
+
+        <button class="bouton bouton--large bouton--rouge" type="submit" data-valider>Valider ma commande</button>
+        <p class="recap-note">En validant, vous acceptez nos <a href="/conditions-de-vente">conditions de vente</a>.</p>
+      </form>
+    </section>
+
+    <aside class="recap" aria-label="Récapitulatif">
+      <h2>Votre commande</h2>
+      <div data-articles></div>
+      <div class="recap-ligne"><span>Sous-total</span><span data-sous-total>—</span></div>
+      <div class="recap-ligne recap-ligne--remise" data-ligne-remise hidden><span data-libelle-remise>Remise</span><span data-remise></span></div>
+      <div class="recap-ligne"><span>Livraison</span><span data-livraison>—</span></div>
+      <div class="recap-ligne recap-ligne--total"><span>Total à payer</span><span data-total>—</span></div>
+      <p class="recap-note">Montants recalculés par le serveur à la validation.</p>
+      <a class="bouton-lien" href="/panier">Modifier le panier</a>
+    </aside>
+  </div>
+
+  <div class="vide" data-vide hidden>
+    <img src="/img/mark-clair.png" alt="">
+    <h2 class="titre-section">Panier vide</h2>
+    <p>Ajoutez un article avant de commander.</p>
+    <a class="bouton" href="/boutique">Voir la collection</a>
+  </div>
+</main>
+
+<script src="/js/i18n.js"></script>
+<script src="/js/atlas.js"></script>
+<script src="/js/commande.js"></script>
+</body>
+</html>

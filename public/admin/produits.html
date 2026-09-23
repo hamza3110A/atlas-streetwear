@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Produits — Administration ATLAS</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.png" type="image/png" sizes="64x64">
+<link rel="stylesheet" href="/admin/css/admin.css">
+</head>
+<body>
+<div class="app">
+  <main class="principal">
+
+    <div class="entete-page">
+      <div>
+        <h1 class="titre-page">Produits</h1>
+        <p class="sous-titre">Ajoutez, modifiez ou retirez un article du catalogue.</p>
+      </div>
+      <button class="btn btn--primaire" type="button" data-nouveau>+ Nouveau produit</button>
+    </div>
+
+    <div class="recherche-boite">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
+        <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path>
+      </svg>
+      <input type="search" data-recherche placeholder="Rechercher un produit…" aria-label="Rechercher un produit">
+    </div>
+
+    <div class="panneau">
+      <div class="table-boite">
+        <table>
+          <thead>
+            <tr>
+              <th></th><th>Produit</th><th>Rayon</th><th class="num">Prix</th>
+              <th class="num">Stock</th><th>État</th><th></th>
+            </tr>
+          </thead>
+          <tbody data-liste><tr><td colspan="7" class="chargement">Chargement…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+</div>
+<script src="/admin/js/admin.js"></script>
+<script src="/admin/js/produits.js"></script>
+</body>
+</html>

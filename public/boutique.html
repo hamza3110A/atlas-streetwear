@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>La boutique — ATLAS STREETWEAR</title>
+<meta name="description" content="Tous les tee-shirts, hoodies et casquettes ATLAS. Paiement à la livraison en Tunisie.">
+<meta name="theme-color" content="#0a0a0a">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.png" type="image/png" sizes="64x64">
+<link rel="stylesheet" href="/css/atlas.css">
+</head>
+<body>
+<a class="saut-contenu" href="#contenu">Aller au contenu</a>
+
+<main class="page page-large" id="contenu">
+  <p class="fil"><a href="/">Accueil</a> / <span data-fil>La boutique</span></p>
+
+  <div class="section-entete">
+    <div>
+      <h1 class="titre-section" data-titre>La boutique</h1>
+      <p data-description>Tout le catalogue. Les tailles épuisées restent affichées, barrées.</p>
+    </div>
+  </div>
+
+  <div class="champ champ--recherche" id="recherche">
+    <label for="q">Rechercher</label>
+    <input type="search" id="q" name="q" placeholder="hoodie, casquette, ATL-TS-001…" autocomplete="off">
+  </div>
+
+  <nav class="barre-filtres" aria-label="Filtrer par rayon" data-filtres></nav>
+
+  <p class="mono texte-gris" data-compte aria-live="polite"></p>
+
+  <h2 class="hors-ecran">Articles</h2>
+  <div class="grille-produits" data-grille>
+    <div class="squelette squelette-carte"></div>
+    <div class="squelette squelette-carte"></div>
+    <div class="squelette squelette-carte"></div>
+    <div class="squelette squelette-carte"></div>
+  </div>
+</main>
+
+<script src="/js/i18n.js"></script>
+<script src="/js/atlas.js"></script>
+<script src="/js/carte-produit.js"></script>
+<script src="/js/boutique.js"></script>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mentions légales — ATLAS STREETWEAR</title>
+<meta name="theme-color" content="#0a0a0a">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.png" type="image/png" sizes="64x64">
+<link rel="stylesheet" href="/css/atlas.css">
+</head>
+<body>
+<a class="saut-contenu" href="#contenu">Aller au contenu</a>
+<main class="page page-etroite" id="contenu">
+  <p class="fil"><a href="/">Accueil</a> / Mentions légales</p>
+  <h1 class="titre-section">Mentions légales</h1>
+  <div class="prose">
+
+    <h2>Éditeur du site</h2>
+    <!-- Une ligne = un élément. Avec des <br>, retirer une ligne laissait
+         un saut de ligne orphelin et un trou dans le bloc. -->
+    <p class="bloc-legal">
+      <span class="ligne-legale">Raison sociale : <span data-legal="legal_raison_sociale"></span></span>
+      <span class="ligne-legale">Forme juridique : <span data-legal="legal_forme_juridique"></span></span>
+      <span class="ligne-legale">Siège social : <span data-legal="legal_siege"></span></span>
+      <span class="ligne-legale" data-ligne="legal_matricule_fiscal">Matricule fiscal : <span data-legal="legal_matricule_fiscal"></span></span>
+      <span class="ligne-legale" data-ligne="legal_rc">Registre de commerce : <span data-legal="legal_rc"></span></span>
+      <span class="ligne-legale">Directeur de la publication : <span data-legal="legal_directeur"></span></span>
+    </p>
+
+    <h2>Contact</h2>
+    <p>Téléphone : <span data-legal="telephone"></span><br>
+       E-mail : <span data-legal="email"></span><br>
+       Adresse : <span data-legal="adresse"></span></p>
+
+    <h2>Hébergement</h2>
+    <p><span data-legal="legal_hebergeur"></span></p>
+
+    <h2>Propriété intellectuelle</h2>
+    <p>L'ensemble des visuels, textes, marques et éléments graphiques présents sur ce site
+       est la propriété de <span data-legal="legal_raison_sociale"></span>. Toute reproduction,
+       même partielle, sans autorisation écrite préalable est interdite.</p>
+
+    <h2>Données personnelles</h2>
+    <p>Les informations collectées lors d'une commande (nom, téléphone, adresse) servent
+       exclusivement à traiter et livrer cette commande. Elles ne sont ni vendues ni transmises
+       à des tiers autres que le transporteur. Conformément à la loi organique n° 2004-63 du
+       27 juillet 2004 relative à la protection des données à caractère personnel, vous disposez
+       d'un droit d'accès, de rectification et de suppression de vos données : écrivez à
+       <span data-legal="email"></span>.</p>
+
+    <h2>Cookies</h2>
+    <!-- DEUX VERSIONS, UNE SEULE SURVIT.
+         Laquelle dépend de l'existence d'un pixel publicitaire réglé dans
+         l'administration. Écrire « aucun cookie publicitaire » en dur était
+         vrai le jour où la page a été écrite et faux le jour où le pixel a
+         été installé — sur la page même qui engage le vendeur. Le serveur
+         dit lequel des deux paragraphes correspond à la réalité, l'autre
+         est retiré. -->
+    <p data-cookies="sans-pixel">Ce site n'utilise aucun cookie publicitaire ni de mesure
+       d'audience tierce. Un espace de stockage local du navigateur conserve uniquement le
+       contenu de votre panier, sur votre appareil. Un cookie technique est déposé à la
+       connexion à l'espace d'administration.</p>
+    <p data-cookies="avec-pixel" hidden>Ce site utilise le pixel de mesure publicitaire de Meta (Facebook, Instagram), qui dépose des cookies permettant de savoir quelle publicité a amené une visite ou une commande. Sont transmis à Meta : les pages consultées, les articles ajoutés au panier et le montant des commandes. Aucune donnée bancaire n'est concernée — ce site n'en collecte aucune. Un espace de stockage local du navigateur conserve le contenu de votre panier, sur votre appareil, et un cookie technique est déposé à la connexion à l'espace d'administration. Vous pouvez refuser les cookies publicitaires dans les réglages de votre navigateur ou de votre compte Meta.</p>
+
+  </div>
+</main>
+<script src="/js/i18n.js"></script>
+<script src="/js/atlas.js"></script>
+<script src="/js/pixel.js"></script>
+<script src="/js/legal.js"></script>
+</body>
+</html>

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Réglages — Administration ATLAS</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.png" type="image/png" sizes="64x64">
+<link rel="stylesheet" href="/admin/css/admin.css">
+</head>
+<body>
+<div class="app">
+  <main class="principal">
+
+    <div class="entete-page">
+      <div>
+        <h1 class="titre-page">Réglages</h1>
+        <p class="sous-titre">Tout ce qui suit se modifie sans toucher au code.</p>
+      </div>
+    </div>
+
+    <!-- L'interrupteur est en HAUT : c'est le réglage qu'on cherche en
+         urgence, un soir de rupture de stock. -->
+    <section class="panneau" data-interrupteur>
+      <h2>Boutique ouverte</h2>
+      <label class="bascule">
+        <input type="checkbox" data-ouverte>
+        <span class="piste"></span>
+        <span class="texte" data-etat>—</span>
+      </label>
+      <p class="mono gris" data-explication></p>
+    </section>
+
+    <form data-form>
+      <section class="panneau">
+        <h2>Identité</h2>
+        <div class="duo">
+          <div class="champ"><label for="nom_boutique">Nom de la boutique</label><input id="nom_boutique" data-cle="nom_boutique"></div>
+          <div class="champ"><label for="accroche">Accroche</label><input id="accroche" data-cle="accroche"></div>
+        </div>
+        <div class="champ"><label for="message_fermeture">Message affiché quand la boutique est fermée</label>
+          <textarea id="message_fermeture" data-cle="message_fermeture"></textarea></div>
+      </section>
+
+      <!-- Les pays servis. Cette section remplace, pour la livraison, les
+           réglages généraux : les frais et le délai dépendent du pays. -->
+      <section class="panneau" data-pays>
+        <h2>Pays servis</h2>
+        <p class="mono gris">Chaque pays a sa devise, ses frais, son délai et son stock.
+          Un pays fermé n'existe pas pour les visiteurs : le sélecteur n'apparaît sur le site
+          qu'à partir de deux pays ouverts.</p>
+        <div data-liste-pays></div>
+      </section>
+
+      <!-- La section « Livraison et paiement » vivait ici. Elle a été
+           RETIRÉE, pas déplacée : depuis que les frais, le seuil de
+           gratuité et le délai dépendent du pays, le site lit ceux de la
+           carte « Pays servis » juste au-dessus. Ces trois champs se
+           laissaient modifier sans que rien ne change sur la boutique —
+           un réglage inerte qui a l'air d'en être un, et deux endroits
+           qui pouvaient se contredire. -->
+
+      <!-- Les alertes de commande. En haut des réglages avec le pixel :
+           ce sont les deux branchements vers l'extérieur, et le seul
+           endroit du site où un secret est saisi. -->
+      <section class="panneau">
+        <h2>Alerte de commande (Telegram)</h2>
+        <p class="mono gris">Un message sur votre téléphone à chaque commande : référence, client,
+          téléphone, ville, montant et articles. Tant que les deux champs sont vides, rien n'est
+          envoyé et rien n'est contacté.</p>
+        <div class="duo">
+          <div class="champ">
+            <label for="telegram_token">Jeton du bot</label>
+            <input id="telegram_token" data-cle="telegram_token" autocomplete="off"
+                   placeholder="1234567890:AAE...">
+            <span class="aide">Donné par <strong>@BotFather</strong> dans Telegram, à la création
+              du bot. <strong>C'est un secret</strong> : qui l'a peut écrire à votre place. Ne le
+              collez nulle part ailleurs.</span>
+          </div>
+          <div class="champ">
+            <label for="telegram_chat">Identifiant de conversation</label>
+            <input id="telegram_chat" data-cle="telegram_chat" inputmode="numeric" placeholder="123456789">
+            <span class="aide">Votre identifiant Telegram, donné par <strong>@userinfobot</strong>.
+              C'est la personne qui recevra les alertes.</span>
+          </div>
+        </div>
+        <div class="groupe-boutons">
+          <button class="btn" type="button" data-essai-notification>Envoyer un message d'essai</button>
+        </div>
+        <p class="mono gris">Enregistrez d'abord, puis essayez. Un jeton mal recopié ne se
+          découvre pas le jour de la première vraie commande.</p>
+      </section>
+
+      <!-- Le pixel publicitaire. Placé avant les mentions légales, parce
+           qu'il les change : le paragraphe « Cookies » de la page publique
+           bascule tout seul selon que ce champ est rempli ou vide. -->
+      <section class="panneau">
+        <h2>Publicité Meta</h2>
+        <div class="champ">
+          <label for="pixel_meta">Identifiant du pixel Meta</label>
+          <input id="pixel_meta" data-cle="pixel_meta" inputmode="numeric" placeholder="1234567890123456">
+          <span class="aide">Le <strong>numéro</strong> de 15 ou 16 chiffres affiché dans Meta
+            Events Manager, à côté du nom de votre pixel — pas le bloc de code entier.
+            <br>Vide : aucun suivi, aucun cookie publicitaire, et la politique de sécurité du
+            site reste fermée aux scripts extérieurs. Rempli : le site envoie à Meta les pages
+            vues, les ajouts au panier et le montant des commandes, et vos mentions légales le
+            disent automatiquement à vos clients.</span>
+        </div>
+      </section>
+
+      <section class="panneau">
+        <h2>Contact et réseaux</h2>
+        <div class="duo">
+          <div class="champ"><label for="telephone">Téléphone</label><input id="telephone" data-cle="telephone" data-requis></div>
+          <div class="champ"><label for="email">E-mail</label><input id="email" data-cle="email" type="email" data-requis></div>
+        </div>
+        <div class="champ"><label for="adresse">Adresse</label><input id="adresse" data-cle="adresse">
+          <span class="aide">S'affiche telle quelle dans le pied de page du site, sous un repère de localisation. Laissez vide si vous préférez ne pas publier d'adresse.</span></div>
+        <div class="duo">
+          <div class="champ"><label for="instagram">Instagram (lien)</label><input id="instagram" data-cle="instagram"></div>
+          <div class="champ"><label for="facebook">Facebook (lien)</label><input id="facebook" data-cle="facebook"></div>
+        </div>
+        <div class="duo">
+          <div class="champ"><label for="whatsapp">WhatsApp (numéro)</label><input id="whatsapp" data-cle="whatsapp" inputmode="tel">
+            <span class="aide">Le numéro, pas un lien : <code>50 494 016</code> suffit — l'indicatif +216 est ajouté tout seul. Le site fabrique le lien « wa.me ».</span></div>
+          <div class="champ"><label for="tiktok">TikTok (lien)</label><input id="tiktok" data-cle="tiktok"></div>
+        </div>
+      </section>
+
+      <section class="panneau">
+        <h2>Mentions légales</h2>
+        <p class="mono gris">Ces champs remplissent les quatre pages légales du site. Tant qu'ils sont vides, ils apparaissent en rouge — ici et sur le site.</p>
+        <div class="duo">
+          <div class="champ"><label for="legal_raison_sociale">Raison sociale</label><input id="legal_raison_sociale" data-cle="legal_raison_sociale" data-requis></div>
+          <div class="champ"><label for="legal_forme_juridique">Forme juridique</label><input id="legal_forme_juridique" data-cle="legal_forme_juridique" data-requis></div>
+        </div>
+        <div class="champ"><label for="legal_entreprise_inscrite">Inscription de l'entreprise</label>
+          <select id="legal_entreprise_inscrite" data-cle="legal_entreprise_inscrite">
+            <option value="1">Inscrite — j'ai un matricule fiscal</option>
+            <option value="0">Pas encore inscrite</option>
+          </select>
+          <span class="aide">« Pas encore inscrite » retire les lignes Matricule fiscal et Registre de commerce de la page publique : mieux vaut ne rien afficher qu'une valeur inexacte. Ici, elles resteront signalées comme manquantes — et vous serez averti avant d'ouvrir la boutique.</span></div>
+        <div class="duo">
+          <div class="champ"><label for="legal_matricule_fiscal">Matricule fiscal</label><input id="legal_matricule_fiscal" data-cle="legal_matricule_fiscal" data-requis></div>
+          <div class="champ"><label for="legal_rc">Registre de commerce</label><input id="legal_rc" data-cle="legal_rc"></div>
+        </div>
+        <div class="champ"><label for="legal_siege">Siège social</label><input id="legal_siege" data-cle="legal_siege" data-requis></div>
+        <div class="duo">
+          <div class="champ"><label for="legal_directeur">Directeur de la publication</label><input id="legal_directeur" data-cle="legal_directeur" data-requis></div>
+          <div class="champ"><label for="legal_hebergeur">Hébergeur</label><input id="legal_hebergeur" data-cle="legal_hebergeur"></div>
+        </div>
+        <div class="champ"><label for="legal_regime_tva">Régime de TVA</label>
+          <select id="legal_regime_tva" data-cle="legal_regime_tva">
+            <option value="non_assujetti">Non assujetti — pas de TVA sur mes prix</option>
+            <option value="assujetti">Assujetti — mes prix incluent la TVA</option>
+          </select>
+          <span class="aide">Détermine la phrase affichée dans vos conditions de vente : « net de taxe — TVA non applicable » ou « toutes taxes comprises ». Annoncer une taxe qui n'existe pas est une information fausse sur le prix.</span></div>
+        <div class="champ"><label for="legal_delai_retract">Délai de rétractation (jours ouvrables)</label><input id="legal_delai_retract" data-cle="legal_delai_retract" inputmode="numeric"><span class="aide">Minimum légal en Tunisie : 10 jours ouvrables (loi 2000-83, article 30). Vous pouvez offrir plus, jamais moins.</span></div>
+      </section>
+
+      <div class="groupe-boutons">
+        <button class="btn btn--primaire" type="submit" data-enregistrer>Enregistrer les réglages</button>
+        <button class="btn" type="button" data-sauvegarde>Sauvegarder la base maintenant</button>
+      </div>
+    </form>
+
+    <!-- Comptes : le commerçant crée un accès pour son employé et le
+         révoque le jour où il part, sans appeler personne. L'API existait
+         depuis le début mais aucune page ne l'appelait : du code mort qui
+         aurait fini par pourrir. -->
+    <section class="panneau">
+      <h2>Comptes d'accès</h2>
+      <p class="mono gris">Chaque personne qui entre ici a son propre compte. Supprimer un compte coupe ses sessions immédiatement.</p>
+      <ul class="liste-simple" data-utilisateurs></ul>
+      <div class="groupe-boutons">
+        <button class="btn" type="button" data-nouvel-utilisateur>Ajouter un compte</button>
+      </div>
+    </section>
+
+    <section class="panneau">
+      <h2>Sauvegardes</h2>
+      <p class="mono gris">Copies de la base rangées dans <code>data/sauvegardes</code>. La sauvegarde automatique tourne chaque nuit ; le bouton plus haut en crée une tout de suite.</p>
+      <ul class="liste-simple" data-sauvegardes></ul>
+    </section>
+
+    <section class="panneau">
+      <h2>Mon compte</h2>
+      <form data-form-mdp>
+        <div class="duo">
+          <div class="champ"><label for="actuel">Mot de passe actuel</label><input id="actuel" type="password" autocomplete="current-password"></div>
+          <div class="champ"><label for="nouveau">Nouveau mot de passe</label><input id="nouveau" type="password" autocomplete="new-password"></div>
+        </div>
+        <button class="btn" type="submit">Changer le mot de passe</button>
+        <p class="mono gris">Changer le mot de passe déconnecte immédiatement tous les autres appareils.</p>
+      </form>
+    </section>
+
+  </main>
+</div>
+<script src="/admin/js/admin.js"></script>
+<script src="/admin/js/reglages.js"></script>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Connexion — Administration ATLAS</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.png" type="image/png" sizes="64x64">
+<link rel="stylesheet" href="/admin/css/admin.css">
+</head>
+<body>
+<main class="connexion">
+  <form class="connexion-boite" data-form novalidate>
+    <img src="/img/mark-clair.png" alt="" width="54" height="86">
+    <h1>Administration</h1>
+    <p class="sous">ATLAS STREETWEAR</p>
+
+    <div class="message message--erreur" data-erreur hidden></div>
+
+    <div class="champ">
+      <label for="email">Adresse e-mail</label>
+      <input type="email" id="email" name="email" required autocomplete="username" autocapitalize="none" spellcheck="false">
+    </div>
+
+    <div class="champ">
+      <label for="mot_de_passe">Mot de passe</label>
+      <input type="password" id="mot_de_passe" name="mot_de_passe" required autocomplete="current-password">
+    </div>
+
+    <button class="btn btn--primaire btn--large" type="submit" data-valider>Se connecter</button>
+
+    <!-- Diagnostic du cookie : si la connexion « réussit » et renvoie ici,
+         c'est presque toujours un cookie Secure envoyé sur du HTTP. La
+         réponse du serveur dit ce qu'il a réellement demandé, on l'affiche
+         plutôt que de chercher pendant une heure un mot de passe correct. -->
+    <p class="diagnostic" data-diagnostic hidden></p>
+  </form>
+</main>
+
+<script src="/admin/js/admin.js"></script>
+<script src="/admin/js/connexion.js"></script>
+</body>
+</html>

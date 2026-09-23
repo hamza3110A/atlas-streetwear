@@ -1,0 +1,12 @@
+# Sauvegarde quotidienne de la base, à chaud (VACUUM INTO).
+[Unit]
+Description=Sauvegarde de la base ATLAS
+
+[Service]
+Type=oneshot
+User=atlas
+Group=atlas
+WorkingDirectory=/var/www/atlas
+ExecStart=/usr/bin/node --disable-warning=ExperimentalWarning scripts/sauvegarde.js
+ProtectSystem=strict
+ReadWritePaths=/var/www/atlas/data

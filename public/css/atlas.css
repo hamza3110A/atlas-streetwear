@@ -1,0 +1,1284 @@
+/* ==========================================================================
+   ATLAS STREETWEAR — feuille de style unique de la vitrine
+   Mobile d'abord. Aucune mise en page n'est écrite en style « inline »
+   dans le HTML : une règle inline gagne toujours contre une media query,
+   et le jour où il faut réparer l'affichage sur un petit écran, on ne peut
+   plus rien faire. Ici, tout passe par des classes.
+   ========================================================================== */
+
+/* ------------------------------------------------------------ polices
+   Montserrat, servie depuis CE serveur.
+
+   Le @import vers Google Fonts qui était ici ne fonctionnait pas : la
+   politique de sécurité du site (voir src/server.js) n'autorise que
+   « style-src 'self' » et « font-src 'self' ». Le navigateur refusait la
+   feuille de Google en silence, et tout le site s'affichait en fait dans
+   la police système du visiteur — Segoe UI sur Windows, San Francisco sur
+   iPhone, Roboto sur Android. Trois rendus différents, aucun choisi.
+
+   Les fichiers sont donc posés dans /public/fonts : 16 Ko par graisse,
+   même dessin pour tout le monde, aucun appel extérieur, et rien à
+   changer dans la CSP. */
+/* Police des GRANDS TITRES — identifiée en mesurant le calque de texte
+   fourni par le studio : « MOUNTAINS » y fait 304 px pour 43 px de
+   capitale, « STREETS » 235 px. Archivo Narrow 700 rend 307 et 237 :
+   1 % d'écart, c'est la même. (Montserrat en rendait 400 et 285.) */
+@font-face {
+  font-family: 'Titre';
+  src: url('/fonts/titre-700.woff2') format('woff2');
+  font-weight: 700; font-style: normal; font-display: swap;
+}
+/* Une seule graisse d'Archivo Narrow : la 400 était déclarée et jamais
+   demandée — le navigateur ne l'a jamais téléchargée, mais la feuille de
+   style annonçait une police que le site n'emploie pas. Idem pour la
+   graisse 800 de Montserrat. Vérifié avec document.fonts : toutes les
+   faces déclarées sont maintenant réellement chargées. */
+@font-face {
+  font-family: 'Montserrat';
+  src: url('/fonts/montserrat-400.woff2') format('woff2');
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'Montserrat';
+  src: url('/fonts/montserrat-700.woff2') format('woff2');
+  font-weight: 700; font-style: normal; font-display: swap;
+}
+
+@font-face {
+  font-family: 'Space Mono';
+  src: url('/fonts/space-mono-latin-400-normal.woff2') format('woff2');
+  font-weight: 400; font-display: swap;
+}
+@font-face {
+  font-family: 'Space Mono';
+  src: url('/fonts/space-mono-latin-700-normal.woff2') format('woff2');
+  font-weight: 700; font-display: swap;
+}
+@font-face {
+  font-family: 'Space Mono';
+  src: url('/fonts/space-mono-latin-ext-400-normal.woff2') format('woff2');
+  font-weight: 400; font-display: swap;
+  unicode-range: U+0100-02BA, U+1E00-1E9F, U+2C60-2C7F, U+A720-A7FF;
+}
+
+/* -------------------------------------------------------------- jetons */
+:root {
+  /* Thème CLAIR.
+
+     Les noms disent désormais le RÔLE, pas la couleur. La version
+     précédente gardait « --noir » pour du blanc cassé et « --blanc » pour
+     du noir : ça marche, mais la première personne qui rouvre ce fichier
+     dans six mois lit exactement l'inverse de ce qu'elle voit à l'écran.
+     Changer de thème ne demande maintenant que de changer ces sept lignes. */
+  --fond:        #f8f8f8;   /* fond général de la page       */
+  --fond-2:      #ffffff;   /* panneaux, tiroir              */
+  --fond-carte:  #fafafa;   /* cartes produit                */
+  --bord:        #e0e0e0;   /* filets et séparateurs         */
+  --texte-doux:  #6a6a6a;   /* texte secondaire              */
+  --texte:       #2a2a2a;   /* texte courant                 */
+  --encre:       #0a0a0a;   /* titres, boutons pleins        */
+
+  /* Posé SUR la photo du héros et dans l'en-tête, qui restent sombres
+     quel que soit le thème de la page. */
+  --sur-photo:   #ffffff;
+  --barre-fond:  rgba(10, 10, 10, .96);
+
+  --rouge:       #c6272d;
+  --rouge-vif:   #e03038;
+  /* Rouge réservé au texte posé SUR une photographie. Le rouge de marque
+     n'y tient pas : mesuré sur les pixels réellement affichés, « MOUNTAINS »
+     et « STREETS » ressortaient à 1,7:1 sur le flanc clair de la montagne,
+     pour un seuil de 3:1. Noircir la photo jusqu'à sauver le rouge de
+     marque aurait demandé un voile à 70 % — la photo n'existait plus.
+     Ce rouge-ci est le même, éclairci, et tient à 3,2:1 sous un voile
+     discret. Il ne sert QUE là : partout ailleurs, --rouge. */
+  --rouge-sur-photo: #ef5a60;
+  --vert:        #2c7a4d;   /* assombri : 3,2:1 sur blanc, insuffisant */
+
+  --entete-h:    64px;
+  --marge:       clamp(16px, 5vw, 64px);
+  --cible:       44px;              /* taille minimale d'une cible tactile */
+  --marque-largeur: clamp(155px, 17.9vw, 330px);  /* relevé sur la maquette */
+
+  --mono: 'Space Mono', ui-monospace, 'Courier New', monospace;
+  --titre: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --titre-heros: 'Titre', 'Archivo Narrow', 'Arial Narrow', sans-serif;
+
+  --transition: 220ms cubic-bezier(.2, .7, .3, 1);
+}
+
+/* ---------------------------------------------------------------- base */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--fond);
+  color: var(--encre);
+  font-family: var(--titre);
+  font-size: 16px;
+  line-height: 1.55;
+  overflow-x: hidden;            /* la page ne défile jamais horizontalement */
+  -webkit-font-smoothing: antialiased;
+}
+
+body.menu-ouvert { overflow: hidden; }
+
+img { max-width: 100%; display: block; }
+
+/* ------------------------------------------------------------------------
+   L'attribut « hidden » doit toujours gagner.
+
+   Sa valeur par défaut est « display: none », mais la MOINDRE règle qui
+   pose un display sur l'élément l'écrase — et .vide, .alerte, .fiche,
+   .recap, .disposition-panier en posent tous un. Résultat observé :
+   « PANIER VIDE » s'affichait sous un panier plein, parce que
+   el.hidden = true ne masquait rien du tout. Le code JavaScript avait
+   raison, c'est la feuille de style qui l'ignorait.
+   ------------------------------------------------------------------------ */
+[hidden] { display: none !important; }
+
+
+a { color: inherit; text-decoration: none; }
+
+button, input, select, textarea { font: inherit; color: inherit; }
+
+/* Un élément focalisé au clavier doit se voir. */
+:focus-visible {
+  outline: 2px solid var(--rouge-vif);
+  outline-offset: 3px;
+}
+
+.saut-contenu {
+  position: absolute; left: -9999px; top: 0; z-index: 200;
+  background: var(--fond); color: var(--encre);
+  padding: 12px 20px; font-family: var(--mono); font-size: 13px;
+}
+.saut-contenu:focus { left: 12px; top: 12px; }
+
+/* Lu par les lecteurs d'écran, invisible à l'œil.
+   Sert aux titres de section qui seraient redondants à l'affichage mais
+   sans lesquels la hiérarchie saute un niveau — un lecteur d'écran qui
+   passe de h1 à h3 laisse croire qu'il a manqué une section. */
+.hors-ecran {
+  position: absolute; width: 1px; height: 1px;
+  margin: -1px; padding: 0; overflow: hidden;
+  clip-path: inset(50%); white-space: nowrap;
+}
+
+/* --------------------------------------------------------- typographie */
+.mono {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+
+.titre-geant,
+.titre-section {
+  font-family: var(--titre);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: -.02em;
+  line-height: .92;
+  margin: 0;
+}
+
+.titre-geant { font-size: clamp(34px, 10.5vw, 92px); }
+.titre-section { font-size: clamp(26px, 6vw, 52px); }
+
+.accent { color: var(--rouge); }
+
+.texte-gris { color: var(--texte-doux); }
+
+/* ============================================================== ENTÊTE */
+/* Deux états :
+     en haut de page   → barre BLANCHE, écriture et logo noirs ;
+     après défilement  → barre NOIRE, écriture et logo blancs.
+   Une seule variable porte le basculement (--barre-encre), tout le reste
+   en hérite par currentColor. Aucune couleur n'est écrite en dur dans les
+   éléments : changer les deux états ne demande de toucher que ces deux
+   règles.
+
+   z-index 100 : l'en-tête reste AU-DESSUS du tiroir (96) et du voile (95),
+   sinon le tiroir ouvert recouvre le bouton ☰ devenu ✕ et le menu ne peut
+   plus se refermer. */
+.entete {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 100;
+  height: var(--entete-h);
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 8px;
+  padding: 0 max(10px, calc(var(--marge) / 2));
+  transition: background var(--transition), color var(--transition), border-color var(--transition);
+
+  /* état HAUT DE PAGE, par défaut : barre blanche.
+     C'est le bon choix sur boutique, panier, commande, pages légales —
+     le fond de ces pages est clair, il faut une séparation. */
+  background: #ffffff;
+  color: var(--encre);
+  border-bottom: 1px solid var(--bord);
+}
+
+/* Sur une page à visuel plein écran (accueil, page d'attente), la barre
+   blanche coupait la photo en deux avant même qu'on ait vu le titre.
+   Elle devient transparente et laisse passer l'image ; un dégradé sombre
+   très court la suit pour que le texte blanc reste lisible quelle que
+   soit la zone de photo qui se trouve dessous — mesuré sur les pixels,
+   sans lui le menu tombait sous le seuil sur le ciel clair. */
+.entete--sur-photo:not(.entete--pose) {
+  background: transparent;
+  color: var(--sur-photo);
+  border-bottom-color: transparent;
+}
+.entete--sur-photo:not(.entete--pose)::before {
+  content: ''; position: absolute; inset: 0 0 auto 0; z-index: -1;
+  height: calc(var(--entete-h) + 28px);
+  background: linear-gradient(180deg, rgba(10,10,10,.62), rgba(10,10,10,0));
+  pointer-events: none;
+}
+.entete--sur-photo:not(.entete--pose) .entete-logo .logo-sombre { display: none; }
+.entete--sur-photo:not(.entete--pose) .entete-logo .logo-clair  { display: block; }
+.entete--sur-photo:not(.entete--pose) .panier-pastille { background: #ffffff; color: var(--encre); }
+
+/* état APRÈS DÉFILEMENT */
+.entete--pose {
+  background: var(--barre-fond);
+  color: var(--sur-photo);
+  border-bottom-color: rgba(255, 255, 255, .12);
+  backdrop-filter: blur(14px);
+}
+
+/* Toutes les cibles tactiles de l'en-tête font au moins 44 × 44 px. */
+.entete-bouton {
+  min-width: var(--cible);
+  min-height: var(--cible);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: none;
+  border: 0;
+  padding: 0 8px;
+  cursor: pointer;
+  color: inherit;              /* suit l'état de la barre */
+}
+
+.burger { flex-direction: column; gap: 5px; }
+.burger span {
+  display: block; width: 22px; height: 2px; background: currentColor;
+  transition: transform var(--transition), opacity var(--transition);
+}
+.burger[aria-expanded="true"] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.burger[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+.burger[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+.entete-gauche { display: flex; align-items: center; gap: 2px; }
+
+.entete-logo {
+  min-width: var(--cible); min-height: var(--cible);
+  display: inline-flex; align-items: center; justify-content: center;
+}
+/* Deux fichiers plutôt qu'un filtre : un filter: invert() sur le logo
+   blanc virait aussi l'étoile rouge. */
+.entete-logo img { height: 30px; width: auto; }
+.entete-logo .logo-sombre { display: block; }
+.entete-logo .logo-clair  { display: none; }
+.entete--pose .entete-logo .logo-sombre { display: none; }
+.entete--pose .entete-logo .logo-clair  { display: block; }
+
+/* Navigation centrale : cachée sur mobile, le menu ☰ la remplace. */
+.entete-nav { display: none; }
+
+.entete-droite { display: flex; align-items: center; gap: 2px; }
+
+.lien-recherche { font-family: var(--mono); font-size: 12px; letter-spacing: .12em; }
+
+.lien-recherche span { display: none; }
+
+/* La pastille du panier s'inverse elle aussi : sombre sur barre blanche,
+   blanche sur barre noire. */
+.panier-pastille {
+  position: relative;
+  background: var(--encre);
+  color: #ffffff;
+  border-radius: 999px;
+  padding: 0 16px;
+  min-height: 36px;
+  min-width: 72px;
+  font-family: var(--mono);
+  font-size: 13px;
+  letter-spacing: .06em;
+  display: inline-flex; align-items: center; justify-content: center;
+  border: 0; cursor: pointer;
+  transition: transform var(--transition), background var(--transition), color var(--transition);
+}
+.entete--pose .panier-pastille { background: #ffffff; color: var(--encre); }
+
+/* La cible tactile fait 44 px même si la pastille en fait 36. */
+.panier-lien {
+  min-width: var(--cible); min-height: var(--cible);
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.panier-lien:hover .panier-pastille { transform: translateY(-1px); }
+
+.panier-compteur {
+  position: absolute; top: -6px; right: -6px;
+  min-width: 20px; height: 20px; padding: 0 5px;
+  background: var(--rouge); color: #fff;
+  border-radius: 999px;
+  font-family: var(--mono); font-size: 11px; font-weight: 700;
+  display: none; align-items: center; justify-content: center;
+}
+.panier-compteur.visible { display: inline-flex; }
+
+/* --------------------------------------------------- bandeau d'annonce */
+.bandeau {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 80;
+  /* Surface sombre posée sur une page claire : le texte y prend
+     --sur-photo, jamais --texte. Sans ça, on écrit du gris foncé sur du
+     noir et le bandeau paraît vide — seul le bouton « Masquer » se voit. */
+  background: var(--barre-fond);
+  color: var(--sur-photo);
+  backdrop-filter: blur(10px);
+  border-top: 0;
+  padding: 10px 16px;
+  display: flex; align-items: center; justify-content: center; gap: 14px;
+  text-align: center;
+}
+.bandeau p { margin: 0; font-family: var(--mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; }
+.bandeau button {
+  background: none; border: 0; cursor: pointer;
+  color: rgba(255, 255, 255, .72);
+  font-family: var(--mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
+  min-height: var(--cible); padding: 0 8px;
+  text-decoration: underline; text-underline-offset: 3px;
+}
+.bandeau[hidden] { display: none; }
+
+/* ============================================================ TIROIR ☰ */
+.voile {
+  position: fixed; inset: 0; z-index: 95;
+  background: rgba(0, 0, 0, .7);
+  opacity: 0; pointer-events: none;
+  transition: opacity var(--transition);
+}
+.voile.ouvert { opacity: 1; pointer-events: auto; }
+
+.tiroir {
+  position: fixed; inset: 0 auto 0 0; z-index: 96;
+  width: min(82vw, 360px);
+  background: var(--fond-2);
+  border-right: 1px solid var(--bord);
+  transform: translateX(-102%);
+  transition: transform var(--transition);
+  display: flex; flex-direction: column;
+  overflow-y: auto;
+  padding: calc(var(--entete-h) + 12px) 0 32px;
+}
+.tiroir.ouvert { transform: none; }
+
+.tiroir-titre {
+  font-family: var(--mono); font-size: 11px; letter-spacing: .2em;
+  text-transform: uppercase; color: var(--texte-doux);
+  padding: 20px 24px 8px; margin: 0;
+}
+
+.tiroir-lien {
+  display: flex; align-items: center; justify-content: space-between;
+  min-height: 56px;                      /* bien au-delà des 44 px requis */
+  padding: 0 24px;
+  font-family: var(--titre); font-weight: 700;
+  font-size: 22px; text-transform: uppercase; letter-spacing: -.01em;
+  border-bottom: 1px solid rgba(255, 255, 255, .06);
+  transition: background var(--transition), color var(--transition);
+}
+.tiroir-lien:hover, .tiroir-lien:focus-visible { background: rgba(255, 255, 255, .05); }
+.tiroir-lien[aria-current="page"] { color: var(--rouge); }
+.tiroir-lien .compte { font-family: var(--mono); font-size: 12px; font-weight: 400; color: var(--texte-doux); }
+
+.tiroir-pied { margin-top: auto; padding: 24px; }
+.tiroir-pied a {
+  display: block; min-height: var(--cible); display: flex; align-items: center;
+  font-family: var(--mono); font-size: 12px; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--texte-doux);
+}
+.tiroir-pied a:hover { color: var(--encre); }
+
+/* ================================================================ HÉROS */
+/* Le visuel est la COMPOSITION EXACTE de vos deux calques : bg.png avec
+   content.png posé par-dessus, au pixel près. Le chevauchement du « S »
+   de STREETS par l'éclair, l'espacement des mots réglé à la main — tout
+   est celui du fichier de design, puisque c'est le fichier de design.
+
+   Deux images, pas une : la version portrait n'est pas un recadrage de la
+   version paysage, c'est une RECOMPOSITION — le fond est recadré, puis le
+   calque de titre reposé dessus à l'échelle de la largeur. Le titre reste
+   donc entier sur téléphone, là où un simple recadrage n'en montrait que
+   « TREETS » et « THE ».
+
+   Le <h1> reste dans la page, masqué à l'œil : les moteurs de recherche et
+   les lecteurs d'écran ont besoin d'un titre en texte, et il continue
+   d'être piloté depuis Administration → Page d'accueil. */
+.heros {
+  position: relative;
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  padding: calc(var(--entete-h) + 20px) var(--marge) calc(30px + var(--bandeau-h, 0px));
+  overflow: hidden;
+  isolation: isolate;
+  color: var(--sur-photo);
+  background: #6c6c6c;
+}
+
+.heros-fond {
+  position: absolute; inset: 0; z-index: -1;
+  background-image: url('/img/hero-mobile-2.jpg');
+  background-size: cover;
+  background-position: center;
+}
+
+/* Voile de lisibilité, dégradé vers le bas — là où se posent les mots.
+   Le haut de la photo reste intact : on assombrit seulement ce qu'il faut.
+   Retiré à partir de 900 px, où le titre est incrusté dans l'image et n'a
+   plus besoin d'aide. */
+.heros::after {
+  content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: linear-gradient(180deg,
+    rgba(10,10,10,0) 0%,
+    rgba(10,10,10,.10) 30%,
+    rgba(10,10,10,.42) 58%,
+    rgba(10,10,10,.52) 100%);
+}
+
+/* TÉLÉPHONE : le titre est du vrai texte, empilé sur un fond nu.
+   La composition paysage du studio ne tient pas dans un écran portrait :
+   « cover » n'en montrait que « RN FROM » et « MOUNTA ». Sur grand écran,
+   c'est l'inverse — l'image composée reprend la main (voir plus bas). */
+.heros-contenu {
+  position: relative;
+  width: 100%;
+  display: flex; flex-direction: column; align-items: center;
+  gap: 14px; text-align: center;
+}
+.heros-titre { position: relative; display: flex; flex-direction: column; align-items: center; gap: 2px; margin: 0; }
+.heros-ligne { display: contents; }
+.heros-creux { display: none; }
+
+/* La marque du héros, visible UNIQUEMENT sur petit écran : au-delà de
+   900 px, c'est la photo composée qui porte déjà le logo.
+
+   « height: auto » n'est pas une précaution de style, c'est la
+   correction d'un défaut mesuré. Les attributs width="240" height="380"
+   du HTML valent aussi comme règles de style, de faible priorité : la
+   largeur était bien écrasée par le clamp ci-dessous, mais PAS la
+   hauteur. Le logo était donc affiché en 129 × 380 px là où son fichier
+   fait 520 × 824 (soit 129 × 204) — étiré de 87 % en hauteur. Le
+   bouquetin et l'éclair étaient allongés, et l'ensemble mangeait un
+   tiers de l'écran du téléphone. Personne ne l'avait vu parce que la
+   marque est masquée sur ordinateur. */
+.heros-marque {
+  width: clamp(112px, 27vw, 180px);
+  height: auto;
+  filter: drop-shadow(0 16px 40px rgba(0, 0, 0, .6));
+  order: -1;
+}
+
+.heros-mot {
+  display: block;
+  font-family: var(--titre-heros);
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 1.04;
+  font-size: clamp(26px, 8vw, 46px);
+  text-wrap: balance;
+  color: var(--sur-photo);
+}
+.heros-mot .accent { color: var(--rouge-sur-photo); }
+
+.heros-sous {
+  margin: 10px 0 0;
+  font-family: var(--mono); font-size: 11px; letter-spacing: .18em;
+  text-transform: uppercase; color: rgba(255,255,255,.82);
+}
+
+.heros-chevron {
+  position: absolute; left: 50%; bottom: calc(18px + var(--bandeau-h, 0px));
+  transform: translateX(-50%);
+  width: var(--cible); height: var(--cible);
+  border: 1px solid rgba(255, 255, 255, .45);
+  border-radius: 50%;
+  display: grid; place-items: center;
+  color: var(--sur-photo);
+  z-index: 2;
+  animation: flotte 2.4s ease-in-out infinite;
+}
+@keyframes flotte { 0%, 100% { transform: translate(-50%, 0); } 50% { transform: translate(-50%, 7px); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .heros-chevron { animation: none; }
+  *, *::before, *::after { transition-duration: .01ms !important; }
+}
+
+/* ============================================================= BOUTONS */
+.bouton {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  min-height: var(--cible);
+  padding: 14px 28px;
+  /* Sur une page claire, un bouton plein est SOMBRE. L'inversion des
+     jetons l'avait laissé en #f8f8f8 sur une page #f8f8f8 : un bouton
+     invisible, dont seul le texte se devinait. */
+  border: 1px solid var(--encre);
+  background: var(--encre);
+  color: var(--fond-2);
+  font-family: var(--mono); font-size: 12px; letter-spacing: .16em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition), border-color var(--transition);
+}
+.bouton:hover:not(:disabled) { background: var(--rouge); border-color: var(--rouge); color: #fff; }
+.bouton:disabled { opacity: .45; cursor: not-allowed; }
+
+/* « Appliquer » (code promo) était écrit en #f8f8f8 sur un panneau
+   #fafafa : rigoureusement invisible. Contraste mesuré : 1,02. */
+.bouton--fantome { background: none; color: var(--encre); border-color: var(--encre); }
+.bouton--fantome:hover:not(:disabled) { background: var(--encre); color: var(--fond-2); border-color: var(--encre); }
+
+.bouton--rouge { background: var(--rouge); border-color: var(--rouge); color: #fff; }
+.bouton--rouge:hover:not(:disabled) { background: var(--rouge-vif); border-color: var(--rouge-vif); }
+
+.bouton--large { width: 100%; }
+
+/* ============================================================ SECTIONS */
+.section { padding: clamp(56px, 10vw, 120px) var(--marge); }
+
+.section-entete {
+  display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between;
+  gap: 16px; margin-bottom: clamp(24px, 4vw, 44px);
+}
+.section-entete p { margin: 6px 0 0; max-width: 52ch; color: var(--texte-doux); font-size: 15px; }
+
+.lien-fleche {
+  font-family: var(--mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase;
+  min-height: var(--cible); display: inline-flex; align-items: center; gap: 8px;
+  border-bottom: 1px solid var(--bord);
+  transition: color var(--transition), border-color var(--transition);
+}
+.lien-fleche:hover { color: var(--rouge); border-color: var(--rouge); }
+
+/* ========================================================= GRILLE PRODUITS */
+.grille-produits {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 2px;
+}
+
+.carte {
+  position: relative;
+  background: var(--fond-carte);
+  display: flex; flex-direction: column;
+}
+
+.carte-visuel {
+  position: relative;
+  aspect-ratio: 3 / 4;                /* photo produit en portrait */
+  overflow: hidden;
+  background: #0f0f0f;
+}
+.carte-visuel img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%; object-fit: cover;
+  transition: opacity var(--transition), transform 600ms cubic-bezier(.2,.7,.3,1);
+}
+.carte-visuel .photo-2 { opacity: 0; }
+
+/* Deuxième photo au survol — uniquement là où il existe un vrai survol.
+   Sur un écran tactile, « hover » se déclenche au premier appui et fait
+   clignoter la vignette. */
+@media (hover: hover) and (pointer: fine) {
+  .carte:hover .photo-1 { opacity: 0; }
+  .carte:hover .photo-2 { opacity: 1; transform: scale(1.03); }
+}
+
+.carte-corps { padding: 14px 14px 18px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+
+.carte-rayon { font-family: var(--mono); font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: var(--texte-doux); }
+
+.carte-nom {
+  font-family: var(--titre); font-weight: 700;
+  font-size: clamp(15px, 3.6vw, 19px); text-transform: uppercase; letter-spacing: -.01em;
+  line-height: 1.05; margin: 0;
+}
+
+.carte-prix { font-family: var(--mono); font-size: 13px; display: flex; align-items: baseline; gap: 8px; margin-top: auto; padding-top: 8px; }
+.carte-prix del { color: var(--texte-doux); font-size: 11px; }
+
+.carte-tailles { display: flex; flex-wrap: wrap; gap: 5px; }
+.carte-taille {
+  font-family: var(--mono); font-size: 10px; letter-spacing: .08em;
+  border: 1px solid var(--bord); padding: 3px 6px; color: var(--texte);
+}
+/* Une taille épuisée reste visible, barrée : elle prouve que la taille existe. */
+.carte-taille--epuise { color: #5a5a5a; text-decoration: line-through; border-color: #1e1e1e; }
+
+.etiquette {
+  position: absolute; top: 10px; left: 10px; z-index: 2;
+  font-family: var(--mono); font-size: 10px; letter-spacing: .14em; text-transform: uppercase;
+  padding: 5px 9px; background: var(--rouge); color: #fff;
+}
+.etiquette--sombre { background: rgba(0,0,0,.8); border: 1px solid var(--bord); }
+
+.carte-lien { position: absolute; inset: 0; z-index: 3; }
+
+/* ================================================================ CRÊTE
+   Le ruban défilant vivait ici. Il a été retiré, pas retouché : son
+   texte était un contour gris pâle sur blanc (2,35:1 mesuré sur les
+   pixels affichés, minimum 3:1) et il promettait « LIVRÉ EN 48 H » en dur, un délai
+   qu'aucun des deux pays servis ne tient.
+
+   À la place, une ligne de crête. Le bloc est noir, la crête découpe
+   le fond clair de la page en dessous : la collection semble se lever
+   derrière la montagne. Aucune animation — donc rien à neutraliser
+   pour « prefers-reduced-motion », et rien qui tourne en continu dans
+   la batterie du téléphone. */
+.crete {
+  position: relative;
+  background: var(--encre);
+  color: var(--sur-photo);
+  /* Le rembourrage horizontal est porté par le repère, PAS par le bloc :
+     posé ici, il laissait deux coins noirs de 64 px à gauche et à droite
+     sous la crête — vu à l'écran, pas deviné. La crête doit toucher les
+     deux bords. */
+  padding: clamp(28px, 6vw, 48px) 0 0;
+}
+.crete-repere {
+  margin: 0 auto;
+  padding: 0 var(--marge) clamp(22px, 5vw, 36px);
+  /* 30ch était une erreur : l'unité « ch » se calcule sur la police du
+     CONTENEUR (16 px), pas sur celle du gros texte. Cela donnait une
+     colonne de 267 px au milieu d'un écran de 1440, et
+     « Livraison — Émirats arabes unis » tombait sur trois lignes.
+
+     Le rembourrage est COMPRIS dans la largeur (box-sizing: border-box) :
+     sans le calc, 34rem laissaient 416 px de texte sur grand écran et
+     « 2 à 4 jours ouvrables » cassait encore en deux. */
+  max-width: calc(34rem + 2 * var(--marge));
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  text-align: center;
+}
+/* La tige rouge est le seul élément décoratif : un repère planté sur la
+   crête. Elle ne porte aucune information — d'où aria-hidden dans le
+   HTML — et peut donc rester rouge vif sur noir sans devoir tenir un
+   seuil de contraste de texte. */
+.crete-tige {
+  display: block; width: 2px; height: clamp(18px, 4vw, 26px);
+  background: var(--rouge-vif);
+}
+.crete-eyebrow {
+  font-family: var(--mono);
+  font-size: clamp(10px, 2.6vw, 12px);
+  letter-spacing: .26em; text-transform: uppercase;
+  color: var(--sur-photo);
+}
+/* Le délai est la phrase que le visiteur doit lire de loin : blanc plein
+   sur noir — 19,8:1 mesuré sur les pixels affichés, contre 2,35:1 pour
+   l'ancien ruban. C'est exactement ce qu'il ratait. */
+.crete-delai {
+  font-family: var(--titre); font-weight: 700;
+  font-size: clamp(20px, 5vw, 34px);
+  line-height: 1.15; letter-spacing: -.01em;
+  text-transform: uppercase;
+  text-wrap: balance;
+  color: var(--sur-photo);
+}
+.crete-ligne {
+  display: block; width: 100%;
+  height: clamp(46px, 9vw, 112px);
+}
+.crete-masse { fill: var(--fond); }
+/* « non-scaling-stroke » est indispensable : le viewBox est étiré
+   horizontalement (preserveAspectRatio=none), et sans cette propriété le
+   trait rouge serait épais en montée et fin à plat — une bavure, pas un
+   trait. Avec elle, il fait 3 px partout, quelle que soit la largeur. */
+.crete-arete {
+  fill: none; stroke: var(--rouge); stroke-width: 3;
+  stroke-linejoin: round; stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+
+/* ============================================================== RÉCITS */
+.manifeste {
+  display: grid; gap: 28px;
+  padding: clamp(56px, 10vw, 120px) var(--marge);
+  border-top: 1px solid var(--bord);
+}
+.manifeste p { margin: 0; color: var(--texte); font-size: 16px; max-width: 62ch; }
+
+.trio { display: grid; gap: 2px; grid-template-columns: 1fr; }
+.trio-item { background: var(--fond-carte); padding: 26px 22px; }
+.trio-item h3 {
+  font-family: var(--titre); font-weight: 700; text-transform: uppercase;
+  font-size: 18px; margin: 0 0 8px; letter-spacing: -.01em;
+}
+.trio-item p { margin: 0; color: var(--texte-doux); font-size: 14px; }
+.trio-num { font-family: var(--mono); font-size: 11px; color: var(--rouge); letter-spacing: .2em; display: block; margin-bottom: 12px; }
+
+/* ============================================================ FILTRES */
+.barre-filtres {
+  display: flex; gap: 8px; overflow-x: auto; padding: 4px 0 12px;
+  scrollbar-width: none;
+}
+.barre-filtres::-webkit-scrollbar { display: none; }
+.puce {
+  flex: 0 0 auto;
+  min-height: var(--cible);
+  display: inline-flex; align-items: center;
+  padding: 0 18px;
+  border: 1px solid var(--bord);
+  background: none; color: var(--texte);
+  font-family: var(--mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase;
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition), border-color var(--transition);
+}
+.puce:hover { border-color: var(--encre); color: var(--encre); }
+.puce[aria-pressed="true"] { background: var(--encre); color: var(--fond); border-color: var(--encre); }
+
+/* ======================================================== FICHE PRODUIT */
+.fiche {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+  padding-top: var(--entete-h);
+}
+
+.fiche-visuels { display: grid; gap: 2px; grid-template-columns: 1fr; background: var(--fond-carte); }
+.fiche-visuel { aspect-ratio: 3 / 4; overflow: hidden; }
+.fiche-visuel img { width: 100%; height: 100%; object-fit: cover; }
+
+.fiche-infos { padding: clamp(24px, 6vw, 56px) var(--marge) 72px; display: flex; flex-direction: column; gap: 20px; }
+
+.fiche-prix { font-family: var(--mono); font-size: 20px; display: flex; align-items: baseline; gap: 12px; }
+.fiche-prix del { font-size: 14px; color: var(--texte-doux); }
+.fiche-prix .remise { color: var(--rouge); font-size: 12px; letter-spacing: .1em; }
+
+.champ-groupe { display: flex; flex-direction: column; gap: 10px; }
+.champ-label { font-family: var(--mono); font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: var(--texte-doux); }
+
+.tailles { display: flex; flex-wrap: wrap; gap: 8px; }
+.taille {
+  min-width: var(--cible); min-height: var(--cible);
+  padding: 0 16px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border: 1px solid var(--bord);
+  background: none; color: var(--encre);
+  font-family: var(--mono); font-size: 13px;
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition), border-color var(--transition);
+}
+.taille:hover:not(:disabled) { border-color: var(--encre); }
+.taille[aria-pressed="true"] { background: var(--encre); color: var(--fond); border-color: var(--encre); }
+.taille:disabled {
+  color: #5a5a5a; border-color: #1c1c1c; cursor: not-allowed;
+  text-decoration: line-through;         /* épuisé mais visible */
+}
+
+.compteur { display: inline-flex; align-items: center; border: 1px solid var(--bord); }
+.compteur button {
+  width: var(--cible); height: var(--cible);
+  background: none; border: 0; cursor: pointer; color: var(--encre);
+  font-family: var(--mono); font-size: 18px; line-height: 1;
+}
+.compteur button:hover { background: rgba(255,255,255,.07); }
+.compteur output { min-width: 44px; text-align: center; font-family: var(--mono); font-size: 15px; }
+
+.liste-points { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.liste-points li {
+  display: flex; gap: 12px; align-items: flex-start;
+  font-size: 14px; color: var(--texte);
+}
+.liste-points li::before { content: '—'; color: var(--rouge); flex: 0 0 auto; }
+
+.replis { border-top: 1px solid var(--bord); }
+.repli { border-bottom: 1px solid var(--bord); }
+.repli summary {
+  min-height: 56px; display: flex; align-items: center; justify-content: space-between;
+  cursor: pointer; list-style: none;
+  font-family: var(--mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase;
+}
+.repli summary::-webkit-details-marker { display: none; }
+.repli summary::after { content: '+'; font-size: 18px; }
+.repli[open] summary::after { content: '−'; }
+.repli-corps { padding: 0 0 20px; color: var(--texte-doux); font-size: 14px; }
+
+/* Un lien AU MILIEU D'UNE PHRASE ne peut pas mesurer 44 px de haut sans
+   écarter les lignes autour de lui. On agrandit donc la seule chose qui
+   compte pour le doigt — la zone cliquable — en compensant le rembourrage
+   par une marge négative : la ligne ne bouge pas d'un pixel, la cible
+   passe de 18 à 44 px. Mesuré : « Conditions de retour » était le dernier
+   élément sous le seuil de la vitrine. */
+.lien-touche {
+  display: inline-block;
+  padding: 13px 0; margin: -13px 0;
+  text-decoration: underline; text-underline-offset: 3px;
+}
+
+/* ============================================================== PANIER */
+.page { padding: calc(var(--entete-h) + 32px) var(--marge) calc(64px + var(--bandeau-h, 0px)); }
+.page-large { max-width: 1200px; margin: 0 auto; }
+.page-etroite { max-width: 780px; margin: 0 auto; }
+
+/* Fil d'Ariane : ce sont de vrais liens de navigation, ils doivent donc
+   atteindre 44 px de haut. On les rend « inline-flex » plutôt que de
+   grossir le texte — la ligne garde son allure, la cible s'agrandit.
+   (Les liens posés à l'intérieur d'une phrase, eux, restent à la taille
+   du texte : la règle des 44 px ne s'applique pas aux liens en ligne.) */
+.fil { font-family: var(--mono); font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--texte-doux); margin-bottom: 18px; }
+.fil a { display: inline-flex; align-items: center; min-height: var(--cible); padding-right: 4px; }
+.fil a:hover { color: var(--encre); }
+
+/* Deux colonnes, en CSS et jamais en style inline : c'est exactement ce
+   qui faisait passer le récapitulatif par-dessus les articles sur mobile. */
+.disposition-panier { display: grid; grid-template-columns: 1fr; gap: 32px; align-items: start; }
+
+/* Même règle que dans l'administration : un enfant de grille ne rétrécit
+   pas sous la largeur de son contenu tant qu'on ne lui a pas donné
+   min-width: 0. C'est la cause n°1 des pages qui débordent sur mobile. */
+.disposition-panier > *, .duo > *, .fiche > *, .manifeste > *,
+.grille-produits > *, .trio > *, .pied > * { min-width: 0; }
+
+.ligne-panier {
+  display: grid;
+  grid-template-columns: 88px 1fr;
+  gap: 16px;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--bord);
+}
+.ligne-panier-visuel { aspect-ratio: 3 / 4; background: var(--fond-carte); overflow: hidden; }
+.ligne-panier-visuel img { width: 100%; height: 100%; object-fit: cover; }
+.ligne-panier-corps { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.ligne-panier-nom { font-family: var(--titre); font-weight: 700; text-transform: uppercase; font-size: 16px; margin: 0; }
+.ligne-panier-meta { font-family: var(--mono); font-size: 11px; letter-spacing: .1em; color: var(--texte-doux); text-transform: uppercase; }
+.ligne-panier-bas { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
+
+.bouton-lien {
+  background: none; border: 0; cursor: pointer; padding: 0 4px;
+  min-height: var(--cible);
+  font-family: var(--mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--texte-doux);
+  text-decoration: underline; text-underline-offset: 4px;
+}
+.bouton-lien:hover { color: var(--rouge); }
+
+.recap {
+  background: var(--fond-carte);
+  border: 1px solid var(--bord);
+  padding: 22px;
+  display: flex; flex-direction: column; gap: 14px;
+}
+.recap h2 { font-family: var(--mono); font-size: 12px; letter-spacing: .2em; text-transform: uppercase; margin: 0; color: var(--texte-doux); }
+.recap-ligne { display: flex; justify-content: space-between; gap: 16px; font-family: var(--mono); font-size: 13px; }
+.recap-ligne--total {
+  border-top: 1px solid var(--bord); padding-top: 14px; font-size: 17px;
+}
+.recap-ligne--remise { color: var(--vert); }
+.recap-note { font-family: var(--mono); font-size: 11px; letter-spacing: .08em; color: var(--texte-doux); line-height: 1.6; }
+
+.jauge { height: 3px; background: var(--bord); overflow: hidden; }
+/* La largeur passe par une variable CSS, pas par un style inline : même
+   une valeur calculée en JavaScript reste pilotable depuis la feuille. */
+.jauge span { display: block; height: 100%; width: var(--valeur, 0%); background: var(--rouge); transition: width 400ms ease; }
+
+/* =========================================================== FORMULAIRE */
+.formulaire { display: grid; gap: 18px; }
+.champ { display: flex; flex-direction: column; gap: 7px; }
+.champ label { font-family: var(--mono); font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--texte-doux); }
+.champ input, .champ select, .champ textarea {
+  min-height: var(--cible);
+  background: var(--fond-2);
+  border: 1px solid var(--bord);
+  color: var(--encre);
+  padding: 12px 14px;
+  font-family: var(--mono); font-size: 15px;   /* 15px minimum : en dessous, iOS zoome au focus */
+  border-radius: 0;
+  width: 100%;
+}
+.champ textarea { min-height: 96px; resize: vertical; line-height: 1.5; }
+.champ input:focus, .champ select:focus, .champ textarea:focus { border-color: var(--encre); outline: none; }
+.champ input:invalid:not(:placeholder-shown) { border-color: var(--rouge); }
+.champ-erreur { color: var(--rouge-vif); font-family: var(--mono); font-size: 11px; letter-spacing: .06em; }
+.champ-aide { color: var(--texte-doux); font-family: var(--mono); font-size: 11px; }
+
+.duo { display: grid; grid-template-columns: 1fr; gap: 18px; }
+
+/* Un champ de recherche large comme l'écran donne l'impression qu'on
+   attend un paragraphe. On le borne. */
+.champ--recherche { max-width: 420px; margin-bottom: 18px; }
+
+.encart {
+  border: 1px solid var(--bord);
+  background: var(--fond-carte);
+  padding: 18px;
+  display: flex; gap: 14px; align-items: flex-start;
+}
+.encart p { margin: 0; font-size: 14px; color: var(--texte); }
+.encart strong { display: block; font-family: var(--mono); font-size: 11px; letter-spacing: .16em; text-transform: uppercase; margin-bottom: 6px; }
+.encart--rouge { border-color: var(--rouge); }
+
+/* =============================================================== ALERTES */
+.alerte {
+  border: 1px solid var(--bord);
+  border-left: 3px solid var(--rouge);
+  background: rgba(198, 39, 45, .08);
+  padding: 14px 16px;
+  font-size: 14px;
+  display: grid; gap: 6px;
+}
+.alerte--ok { border-left-color: var(--vert); background: rgba(63, 157, 106, .08); }
+/* Ni une erreur ni un succès : une précision. Un code promo refusé
+   n'empêche pas de commander, il ne doit donc pas s'afficher en rouge. */
+.alerte--info { border-left-color: var(--texte-doux); background: rgba(10, 10, 10, .04); }
+.alerte ul { margin: 4px 0 0; padding-left: 18px; }
+.alerte[hidden] { display: none; }
+
+.notice {
+  position: fixed; left: 50%; bottom: calc(24px + var(--bandeau-h, 0px)); transform: translate(-50%, 20px);
+  z-index: 120;
+  background: var(--encre); color: var(--fond);
+  padding: 13px 20px;
+  font-family: var(--mono); font-size: 12px; letter-spacing: .1em; text-transform: uppercase;
+  opacity: 0; pointer-events: none;
+  transition: opacity var(--transition), transform var(--transition);
+  max-width: calc(100vw - 32px);
+  text-align: center;
+}
+.notice.visible { opacity: 1; transform: translate(-50%, 0); }
+.notice--erreur { background: var(--rouge); color: #fff; }
+
+/* =============================================================== ÉTATS */
+.vide { text-align: center; padding: 64px 0; display: grid; gap: 18px; justify-items: center; }
+.vide img { width: 64px; opacity: .5; }
+.vide p { margin: 0; color: var(--texte-doux); }
+
+.squelette { background: var(--fond-carte); position: relative; overflow: hidden; }
+.squelette::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.05), transparent);
+  animation: balaye 1.3s infinite;
+}
+@keyframes balaye { to { transform: translateX(100%); } }
+.squelette-carte { aspect-ratio: 3 / 4; }
+
+/* ================================================================ PIED */
+.pied {
+  border-top: 1px solid var(--bord);
+  padding: clamp(40px, 8vw, 72px) var(--marge) calc(36px + var(--bandeau-h, 0px));
+  display: grid; gap: 36px;
+}
+.pied-marque { display: grid; gap: 14px; justify-items: start; }
+.pied-marque img {
+  width: 96px;
+  /* Aucun filtre d'inversion ici. Le badge est déjà fourni en version
+     encre (badge-clair.png) ; l'inverser le repeignait en BLANC sur une
+     page blanche — logo fantôme, dont seule l'étoile rouge restait
+     visible, hue-rotate la ramenant à sa teinte d'origine. */
+}
+.pied-marque p { margin: 0; color: var(--texte-doux); font-size: 14px; max-width: 40ch; }
+
+.pied-colonnes { display: grid; gap: 28px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.pied-colonne .pied-titre { font-family: var(--mono); font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--texte-doux); margin: 0 0 8px; }
+.pied-colonne a, .pied-colonne span {
+  display: flex; align-items: center; min-height: var(--cible);
+  font-size: 14px; color: var(--texte);
+}
+.pied-colonne a:hover { color: var(--rouge); }
+
+/* Une ligne de contact : le pictogramme, puis le texte. `gap` plutôt
+   qu'une marge sur l'icône — si un jour une ligne n'en a pas, rien ne
+   se décale. */
+.pied-ligne { gap: 10px; }
+.pied-ligne svg { flex: none; color: var(--texte-doux); }
+/* Le texte de la ligne est un <span>, et la règle ci-dessus le rendait
+   `flex` à son tour : une adresse e-mail longue ne se serait plus coupée
+   et aurait débordé de la colonne sur un téléphone étroit. On le remet
+   en texte, et on l'autorise à se couper au milieu d'un mot — une adresse
+   e-mail n'a pas d'espace où couper proprement. */
+.pied-colonne .pied-ligne > span {
+  display: inline; min-height: 0; min-width: 0; overflow-wrap: anywhere;
+}
+.pied-colonne a.pied-ligne:hover svg { color: var(--rouge); }
+
+/* Les réseaux : des ronds de 44 px, la taille d'un doigt. Ils sortent de
+   la colonne verticale pour tenir sur une ligne — trois mots empilés
+   ressemblaient à la suite du menu. */
+.pied-reseaux { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.pied-colonne .pied-reseaux a {
+  width: var(--cible); height: var(--cible);
+  display: grid; place-items: center;
+  border: 1px solid var(--bord); border-radius: 50%;
+  color: var(--texte); transition: color .15s, border-color .15s;
+}
+.pied-colonne .pied-reseaux a:hover { color: var(--rouge); border-color: var(--rouge); }
+.pied-reseaux svg { width: 20px; height: 20px; }
+
+.pied-bas {
+  border-top: 1px solid var(--bord); padding-top: 22px;
+  display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between;
+  font-family: var(--mono); font-size: 11px; letter-spacing: .1em; color: var(--texte-doux);
+}
+
+/* Signature du développeur. Discrète : c'est la boutique du commerçant,
+   pas un portfolio. Le lien garde une zone cliquable de 44 px comme tous
+   les autres liens en ligne du site — un doigt ne vise pas une ligne de
+   11 px de haut. */
+.pied-signature a {
+  display: inline-block;
+  /* 14 px et non 13 : la ligne du pied fait 11 px, 13+13+17 tombait à
+     43 px — un pixel sous le seuil. Mesuré, pas estimé. */
+  padding: 14px 2px; margin: -14px -2px;
+  color: var(--texte); text-decoration: underline; text-underline-offset: 3px;
+}
+.pied-signature a:hover { color: var(--encre); }
+
+/* ======================================================= PORTE DU PAYS
+   La question posée une seule fois, à la première visite.
+
+   La photographie est le fond, pas une décoration posée à côté : c'est
+   elle qui fait comprendre en une seconde qu'on entre quelque part.
+   Elle est assombrie par un voile — sur l'original, le ciel gris clair
+   remonte à 4,5:1 contre du blanc, ce qui passe, mais le flanc éclairé
+   de la montagne tombait à 2,1:1. Le voile règle les deux d'un coup et
+   ne coûte rien à la lecture de l'image. */
+.porte-pays {
+  position: fixed; inset: 0; z-index: 300;
+  display: grid; place-items: center;
+  padding: var(--marge);
+}
+.porte-fond {
+  position: absolute; inset: 0;
+  background: #0a0a0a url('/img/pays-mobile.jpg') center/cover no-repeat;
+}
+/* Le voile. Deux couches : un noir uniforme pour le contraste, et un
+   dégradé qui assombrit davantage le centre, là où le texte se pose. */
+.porte-fond::after {
+  content: ''; position: absolute; inset: 0;
+  background:
+    radial-gradient(120% 90% at 50% 45%, rgba(0,0,0,.58) 0%, rgba(0,0,0,.34) 58%, rgba(0,0,0,.48) 100%);
+}
+@media (min-width: 760px) {
+  .porte-fond { background-image: url('/img/pays-desktop.jpg'); }
+}
+
+.porte-boite {
+  position: relative;
+  width: min(520px, 100%);
+  text-align: center;
+  color: #fff;
+  display: grid; justify-items: center; gap: 14px;
+}
+.porte-marque { width: 76px; height: auto; }
+.porte-sur-titre {
+  margin: 0; font-family: var(--mono); font-size: 11px;
+  letter-spacing: .28em; text-transform: uppercase; color: rgba(255,255,255,.78);
+}
+.porte-titre {
+  margin: 0; font-family: var(--titre); font-weight: 700;
+  text-transform: uppercase; letter-spacing: -.02em; line-height: .95;
+  font-size: clamp(30px, 8vw, 46px);
+}
+.porte-texte {
+  margin: 0; max-width: 34ch; font-size: 14px; line-height: 1.6;
+  color: rgba(255,255,255,.86);
+}
+.porte-choix {
+  display: grid; gap: 10px; width: 100%; margin-top: 8px;
+}
+@media (min-width: 560px) {
+  .porte-choix { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+.porte-bouton {
+  min-height: 64px;                 /* bien au-delà des 44 px : c'est LE geste de la page */
+  display: grid; gap: 2px; align-content: center;
+  padding: 12px 18px; cursor: pointer;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.55);
+  color: #fff; border-radius: 2px;
+  transition: background var(--transition), border-color var(--transition);
+}
+.porte-bouton:hover:not(:disabled) { background: var(--rouge); border-color: var(--rouge); }
+.porte-bouton:disabled { opacity: .55; cursor: default; }
+.porte-bouton:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+.porte-pays-nom {
+  font-family: var(--titre); font-weight: 700; font-size: 15px;
+  text-transform: uppercase; letter-spacing: .04em;
+}
+.porte-pays-devise {
+  font-family: var(--mono); font-size: 11px; letter-spacing: .12em;
+  text-transform: uppercase; color: rgba(255,255,255,.72);
+}
+/* La page derrière ne défile pas tant que la question est posée. */
+body.porte-ouverte { overflow: hidden; }
+
+/* ==================================================== SÉLECTEUR DE PAYS */
+/* Une liste déroulante native, et non une rangée de drapeaux : elle est
+   utilisable au clavier, lue par les lecteurs d'écran, et sur téléphone
+   elle ouvre le sélecteur du système — plus grand et plus sûr du doigt
+   que tout ce qu'on dessinerait soi-même.
+
+   Pas de drapeau non plus : un drapeau dit une nationalité, pas une
+   adresse de livraison. Le texte dit « Tunisie — DT », qui est
+   exactement l'information utile. */
+.selecteur-marche { display: flex; align-items: center; }
+.selecteur-marche select {
+  min-height: var(--cible);
+  padding: 0 28px 0 10px;
+  border: 1px solid var(--bord); border-radius: 2px;
+  background: transparent; color: inherit;
+  font-family: var(--mono); font-size: 12px; letter-spacing: .06em;
+  /* Le chevron est dessiné ici plutôt que laissé au navigateur : celui
+     de Windows est un gros carré gris qui jure avec la barre. */
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5 6 6.5l5-5' fill='none' stroke='%23999' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 9px center; background-size: 11px 7px;
+}
+.selecteur-marche select:focus-visible { outline: 2px solid var(--rouge); outline-offset: 2px; }
+/* Sur la photo d'accueil, la barre est transparente et le texte blanc :
+   la bordure et le chevron doivent suivre, sinon le sélecteur devient
+   un rectangle sombre posé sur l'image. */
+.entete--sur-photo .selecteur-marche select {
+  border-color: rgba(255, 255, 255, .55); color: #fff;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5 6 6.5l5-5' fill='none' stroke='%23fff' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+.entete--sur-photo .selecteur-marche select option { color: var(--encre); }
+.tiroir-marche { padding: 4px 0 10px; }
+.tiroir-marche select { width: 100%; }
+/* Sur les écrans étroits, la barre du haut est déjà pleine : le
+   sélecteur n'y tient pas, il reste dans le tiroir. */
+@media (max-width: 720px) {
+  .entete-droite .selecteur-marche { display: none; }
+}
+
+/* ======================================================== PAGES SIMPLES */
+.prose { max-width: 72ch; }
+.prose h2 { font-family: var(--titre); font-weight: 700; text-transform: uppercase; font-size: 22px; margin: 36px 0 12px; }
+.prose p, .prose li { color: var(--texte); font-size: 15px; line-height: 1.7; }
+.prose a { color: var(--rouge); text-decoration: underline; text-underline-offset: 3px; }
+.a-remplir { color: var(--rouge); font-family: var(--mono); font-size: 13px; border-bottom: 1px dashed var(--rouge); }
+.ligne-legale { display: block; }
+
+/* ============================================================ FERMETURE */
+/* --------------------------------------------------------------------------
+   PAGE « BIENTÔT DISPONIBLE »
+
+   Elle a son propre fond, et surtout : un fond SANS TEXTE. Le visuel
+   d'accueil porte désormais le titre en dur dans l'image ; le réutiliser
+   ici superposait « BIENTÔT DISPONIBLE » à « BUILT FOR THE STREETS » et
+   deux chevreuils l'un sur l'autre. Un fond décoratif ne doit jamais
+   contenir de mots, sinon toute page qui l'emprunte hérite des mots.
+
+   Le texte est clair, pas foncé : cette page est le seul endroit du site
+   posé sur une photo sombre alors que le reste du thème est clair. Sans
+   cette inversion, le titre héritait de --texte (#2a2a2a) et disparaissait
+   dans la montagne. Le voile garantit la lisibilité même si le commerçant
+   change un jour la photo pour une plus claire.
+   -------------------------------------------------------------------------- */
+.fermee {
+  min-height: 100svh; display: grid; place-items: center; text-align: center;
+  padding: 40px var(--marge); position: relative; isolation: isolate;
+  color: var(--sur-photo);
+}
+.fermee-fond {
+  position: absolute; inset: 0; z-index: -2;
+  background-image: url('/img/hero-mobile-2.jpg');
+  background-size: cover; background-position: center;
+}
+.fermee::after {
+  content: ''; position: absolute; inset: 0; z-index: -1;
+  background: linear-gradient(180deg, rgba(10,10,10,.55), rgba(10,10,10,.86));
+}
+.fermee-contenu { display: grid; gap: 22px; justify-items: center; max-width: 620px; }
+.fermee-contenu img { width: clamp(110px, 30vw, 180px); }
+.fermee .texte-gris { color: rgba(255,255,255,.82); }
+/* Le rouge de marque (#c6272d) plafonne à 3,5:1 sur du noir absolu — et le
+   voile ne va pas jusqu'au noir absolu. Mesuré sur la capture réelle, il
+   tombait à 2,4:1 sur mobile : sous le seuil de 3:1 des grands titres.
+   --rouge-vif est le même rouge, éclairci, déjà dans la palette. */
+.fermee .accent { color: var(--rouge-sur-photo); }
+
+/* ==========================================================================
+   POINTS DE RUPTURE — on n'élargit qu'à partir du moment où la place existe
+   ========================================================================== */
+@media (min-width: 560px) {
+  .grille-produits { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2px; }
+  .duo { grid-template-columns: 1fr 1fr; }
+  .trio { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .lien-recherche span { display: inline; }
+  .ligne-panier { grid-template-columns: 110px 1fr; }
+}
+
+@media (min-width: 900px) {
+  :root { --entete-h: 76px; }
+
+  .entete-nav {
+    display: flex; align-items: center; justify-content: center; gap: 4px;
+  }
+  .entete-nav a {
+    min-height: var(--cible); padding: 0 18px;
+    display: inline-flex; align-items: center;
+    font-family: var(--mono); font-size: 12px; letter-spacing: .18em; text-transform: uppercase;
+    color: inherit;              /* suit l'état de la barre */
+    opacity: .82;
+    transition: color var(--transition), opacity var(--transition);
+  }
+  .entete-nav a:hover, .entete-nav a[aria-current="page"] { color: var(--rouge); opacity: 1; }
+
+  /* GRAND ÉCRAN : l'image composée — bg.png + content.png superposés au
+     pixel près. Le chevauchement du « S » par l'éclair, les espacements
+     réglés à la main : c'est le fichier de design, tel quel. Le titre en
+     texte reste dans le code, masqué à l'œil, pour les moteurs de
+     recherche et les lecteurs d'écran. */
+  .heros-fond { background-image: url('/img/hero-desktop-2.jpg'); }
+  .heros::after { display: none; }   /* titre incrusté dans l'image */
+  .fermee-fond { background-image: url('/img/fond-large-2.jpg'); }
+  .heros { padding: 0; }
+  .heros-titre {
+    position: absolute;
+    width: 1px; height: 1px; margin: -1px; padding: 0;
+    overflow: hidden; clip-path: inset(50%); white-space: nowrap;
+  }
+  .heros-marque, .heros-sous { display: none; }
+
+  .grille-produits { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+  .fiche { grid-template-columns: 1.15fr 1fr; gap: 2px; }
+  .fiche-visuels { grid-template-columns: 1fr; max-height: none; }
+  .fiche-infos { position: sticky; top: var(--entete-h); align-self: start; }
+
+  .disposition-panier { grid-template-columns: 1.6fr 1fr; gap: 48px; }
+  .recap { position: sticky; top: calc(var(--entete-h) + 20px); }
+
+  .pied { grid-template-columns: 1.2fr 2fr; gap: 48px; align-items: start; }
+  .pied-colonnes { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .pied-bas { grid-column: 1 / -1; }
+
+  .manifeste { grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
+}
+
+@media (min-width: 1280px) {
+  .grille-produits { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .fiche-visuels { grid-template-columns: 1fr 1fr; }
+}
+
+/* ------------------------------------------------------------ impression */
+@media print {
+  /* .crete ajoutée : un aplat noir pleine largeur vide une cartouche
+     d'encre pour un élément purement décoratif. */
+  .entete, .bandeau, .tiroir, .voile, .heros-chevron, .crete, .pied { display: none !important; }
+  body { background: #fff; color: #000; }
+}

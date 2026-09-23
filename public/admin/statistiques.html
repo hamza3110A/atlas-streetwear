@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Statistiques — Administration ATLAS</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.png" type="image/png" sizes="64x64">
+<link rel="stylesheet" href="/admin/css/admin.css">
+</head>
+<body>
+<div class="app">
+  <main class="principal">
+
+    <div class="entete-page">
+      <div>
+        <h1 class="titre-page">Statistiques</h1>
+        <p class="sous-titre">Qui vient sur votre site, par où, et ce qu'il regarde.</p>
+      </div>
+      <div class="groupe-boutons" role="group" aria-label="Période">
+        <button class="btn btn--petit" type="button" data-periode="7">7 jours</button>
+        <button class="btn btn--petit btn--primaire" type="button" data-periode="30">30 jours</button>
+        <button class="btn btn--petit" type="button" data-periode="90">90 jours</button>
+      </div>
+    </div>
+
+    <div class="message" data-message hidden></div>
+
+    <div class="grille-stats">
+      <div class="stat"><div class="valeur" data-visiteurs>—</div><div class="libelle">Visiteurs</div></div>
+      <div class="stat"><div class="valeur" data-visites>—</div><div class="libelle">Pages vues</div></div>
+      <div class="stat"><div class="valeur" data-commandes>—</div><div class="libelle">Commandes</div></div>
+      <div class="stat"><div class="valeur" data-conversion>—</div><div class="libelle">Taux de conversion</div></div>
+    </div>
+
+    <section class="panneau">
+      <h2>Fréquentation</h2>
+      <!-- Le graphique est dessiné en SVG, sans bibliothèque : le projet
+           n'a pas d'étape de compilation, et 200 Ko de librairie pour
+           trente barres serait un mauvais échange. -->
+      <div class="graphe" data-graphe></div>
+      <p class="mono gris" data-legende></p>
+    </section>
+
+    <div class="duo">
+      <section class="panneau">
+        <h2>D'où viennent les visiteurs</h2>
+        <table class="compacte">
+          <thead><tr><th>Provenance</th><th class="num">Visiteurs</th><th class="num">Pages vues</th></tr></thead>
+          <tbody data-sources><tr><td colspan="3" class="chargement">…</td></tr></tbody>
+        </table>
+      </section>
+
+      <section class="panneau">
+        <h2>Sur quel appareil</h2>
+        <table class="compacte">
+          <thead><tr><th>Appareil</th><th class="num">Visiteurs</th><th class="num">Part</th></tr></thead>
+          <tbody data-appareils><tr><td colspan="3" class="chargement">…</td></tr></tbody>
+        </table>
+      </section>
+    </div>
+
+    <section class="panneau">
+      <h2>Produits les plus regardés</h2>
+      <p class="mono gris">Un article très vu et peu vendu vous dit où agir : la photo, le prix, ou les tailles disponibles.</p>
+      <div class="table-boite">
+        <table>
+          <thead><tr><th>Produit</th><th class="num">Vues</th><th class="num">Visiteurs</th><th class="num">Vendus</th><th class="num">Vues par vente</th></tr></thead>
+          <tbody data-produits><tr><td colspan="5" class="chargement">…</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panneau">
+      <h2>Pages les plus vues</h2>
+      <table class="compacte">
+        <thead><tr><th>Page</th><th class="num">Vues</th><th class="num">Visiteurs</th></tr></thead>
+        <tbody data-pages><tr><td colspan="3" class="chargement">…</td></tr></tbody>
+      </table>
+    </section>
+
+    <section class="panneau">
+      <h2>Comment ces chiffres sont obtenus</h2>
+      <p class="mono gris">
+        Le comptage se fait sur votre serveur, au moment où la page est envoyée — aucun service extérieur,
+        aucune donnée qui part chez Google. Aucune adresse IP n'est conservée : un visiteur est reconnu
+        par une empreinte qui change chaque nuit, ce qui permet de le compter une fois dans la journée
+        sans pouvoir le suivre d'un jour à l'autre. Votre site ne pose donc aucun cookie de mesure,
+        et n'a besoin d'aucune bannière. Les robots des moteurs de recherche sont écartés, et vos propres
+        visites en tant qu'administrateur connecté ne sont pas comptées.
+      </p>
+    </section>
+
+  </main>
+</div>
+<script src="/admin/js/admin.js"></script>
+<script src="/admin/js/statistiques.js"></script>
+</body>
+</html>

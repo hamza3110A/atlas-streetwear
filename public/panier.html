@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Panier — ATLAS STREETWEAR</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0a0a0a">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.png" type="image/png" sizes="64x64">
+<link rel="stylesheet" href="/css/atlas.css">
+</head>
+<body>
+<a class="saut-contenu" href="#contenu">Aller au contenu</a>
+
+<main class="page page-large" id="contenu">
+  <p class="fil"><a href="/">Accueil</a> / Panier</p>
+  <h1 class="titre-section">Votre panier</h1>
+
+  <div class="alerte" data-avertissements hidden></div>
+
+  <div class="disposition-panier" data-disposition hidden>
+    <section aria-label="Articles">
+      <div data-lignes></div>
+      <p class="mono texte-gris"><a class="lien-fleche" href="/boutique">Continuer mes achats</a></p>
+    </section>
+
+    <aside class="recap" aria-label="Récapitulatif">
+      <h2>Récapitulatif</h2>
+
+      <div class="recap-ligne"><span>Sous-total</span><span data-sous-total>—</span></div>
+      <div class="recap-ligne recap-ligne--remise" data-ligne-remise hidden><span data-libelle-remise>Remise</span><span data-remise></span></div>
+      <div class="recap-ligne"><span>Livraison</span><span data-livraison>—</span></div>
+
+      <div data-jauge hidden>
+        <div class="jauge"><span data-jauge-barre></span></div>
+        <p class="recap-note" data-jauge-texte></p>
+      </div>
+
+      <div class="recap-ligne recap-ligne--total"><span>Total</span><span data-total>—</span></div>
+
+      <form class="champ" data-form-promo>
+        <label for="promo">Code promo</label>
+        <input type="text" id="promo" name="promo" autocomplete="off" placeholder="BIENVENUE10">
+        <button class="bouton bouton--fantome" type="submit">Appliquer</button>
+      </form>
+
+      <a class="bouton bouton--large bouton--rouge" href="/commande" data-vers-commande>Commander</a>
+      <p class="recap-note">Paiement à la livraison. Les montants sont calculés par notre serveur au moment de la validation.</p>
+    </aside>
+  </div>
+
+  <div class="vide" data-vide hidden>
+    <img src="/img/mark-clair.png" alt="">
+    <h2 class="titre-section">Panier vide</h2>
+    <p>Rien pour l'instant.</p>
+    <a class="bouton" href="/boutique">Voir la collection</a>
+  </div>
+</main>
+
+<script src="/js/i18n.js"></script>
+<script src="/js/atlas.js"></script>
+<script src="/js/panier.js"></script>
+</body>
+</html>
