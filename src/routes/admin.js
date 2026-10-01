@@ -40,6 +40,14 @@ function sansAccent(s) {
 // =====================================================  TABLEAU DE BORD
 r.get('/tableau-de-bord', (req, res) => {
   const jour = "date(cree_le) = date('now')";
+  /* FENÊTRE GLISSANTE DE 30 JOURS, et non le mois calendaire.
+     « Ce mois-ci » retombait à zéro à minuit le 1er du mois : le
+     commerçant ouvrait son écran le matin et voyait 0 DT alors qu'il
+     avait vendu la veille. Le chiffre était juste, la question était
+     mauvaise. Trente jours glissants répondent à « combien ces derniers
+     temps », qui est ce qu'on regarde vraiment. 29 jours en arrière plus
+     aujourd'hui = 30 jours. */
+  const fenetre = "date(cree_le) >= date('now','-29 days')";
   const stats = {
     commandes_nouvelles: db.get("SELECT COUNT(*) n FROM commandes WHERE statut = 'nouvelle'").n,
     commandes_a_preparer: db.get("SELECT COUNT(*) n FROM commandes WHERE statut IN ('confirmee','en_preparation')").n,
@@ -54,7 +62,7 @@ r.get('/tableau-de-bord', (req, res) => {
        de change, c'est produire un chiffre d'affaires faux — et il avait
        l'air parfaitement normal à l'écran. */
     chiffre_jour: db.get(`SELECT COALESCE(SUM(total),0) t FROM commandes WHERE ${jour} AND statut != 'annulee' AND COALESCE(marche,'tn') = ?`, marches.defaut().code).t,
-    chiffre_mois: db.get("SELECT COALESCE(SUM(total),0) t FROM commandes WHERE strftime('%Y-%m', cree_le) = strftime('%Y-%m','now') AND statut != 'annulee' AND COALESCE(marche,'tn') = ?", marches.defaut().code).t,
+    chiffre_30j: db.get(`SELECT COALESCE(SUM(total),0) t FROM commandes WHERE ${fenetre} AND statut != 'annulee' AND COALESCE(marche,'tn') = ?`, marches.defaut().code).t,
     panier_moyen: db.get("SELECT COALESCE(CAST(AVG(total) AS INTEGER),0) t FROM commandes WHERE statut != 'annulee' AND COALESCE(marche,'tn') = ?", marches.defaut().code).t,
     produits_actifs: db.get('SELECT COUNT(*) n FROM produits WHERE actif = 1').n,
     clients: db.get('SELECT COUNT(*) n FROM clients').n,
@@ -89,7 +97,7 @@ r.get('/tableau-de-bord', (req, res) => {
   const parMarche = marches.actifs().map((m) => ({
     code: m.code, nom: m.nom, devise: m.devise, decimales: m.decimales,
     jour: db.get(`SELECT COALESCE(SUM(total),0) t FROM commandes WHERE ${jour} AND statut != 'annulee' AND COALESCE(marche,'tn') = ?`, m.code).t,
-    mois: db.get("SELECT COALESCE(SUM(total),0) t FROM commandes WHERE strftime('%Y-%m', cree_le) = strftime('%Y-%m','now') AND statut != 'annulee' AND COALESCE(marche,'tn') = ?", m.code).t,
+    trente_jours: db.get(`SELECT COALESCE(SUM(total),0) t FROM commandes WHERE ${fenetre} AND statut != 'annulee' AND COALESCE(marche,'tn') = ?`, m.code).t,
     commandes: db.get("SELECT COUNT(*) n FROM commandes WHERE statut != 'annulee' AND COALESCE(marche,'tn') = ?", m.code).n,
     panier: db.get("SELECT COALESCE(CAST(AVG(total) AS INTEGER),0) t FROM commandes WHERE statut != 'annulee' AND COALESCE(marche,'tn') = ?", m.code).t,
   }));

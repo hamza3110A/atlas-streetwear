@@ -48,7 +48,7 @@
      * vide serait pire.
      */
     /* Le repli, quand le détail par pays ne porte pas cette valeur. */
-    const GLOBAL = { jour: 'chiffre_jour', mois: 'chiffre_mois', panier: 'panier_moyen' };
+    const GLOBAL = { jour: 'chiffre_jour', trente_jours: 'chiffre_30j', panier: 'panier_moyen' };
 
     const argent = (cle) => {
       const seul = () => A.ech(A.prixMarche(s[GLOBAL[cle]], principal));
@@ -78,7 +78,7 @@
       { v: A.ech(s.commandes_nouvelles), l: 'Commandes à traiter', alerte: s.commandes_nouvelles > 0 },
       { v: A.ech(s.commandes_jour), l: 'Commandes aujourd\'hui' },
       { v: argent('jour'), l: 'Encaissé aujourd\'hui' },
-      { v: argent('mois'), l: 'Ce mois-ci' },
+      { v: argent('trente_jours'), l: '30 derniers jours' },
       { v: argent('panier'), l: 'Panier moyen' },
       { v: A.ech(s.commandes_a_preparer), l: 'À préparer' },
       { v: A.ech(s.produits_actifs), l: 'Produits en vente' },
@@ -113,7 +113,7 @@
                 <span><strong>${A.ech(m.nom)}</strong>
                   <span class="gris">· ${m.commandes} commande(s)</span></span>
                 <span class="pousse-droite mono">
-                  ${A.prixMarche(m.jour, m)} aujourd'hui · ${A.prixMarche(m.mois, m)} ce mois-ci
+                  ${A.prixMarche(m.jour, m)} aujourd'hui · ${A.prixMarche(m.trente_jours, m)} sur 30 jours
                 </span>
               </li>`).join('')}
           </ul>`;
